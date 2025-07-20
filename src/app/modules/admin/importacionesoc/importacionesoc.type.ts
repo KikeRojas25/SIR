@@ -1,0 +1,41 @@
+export interface OCResult {
+    tI_ORDE_COMP: string;
+    dE_RUBR: string;
+    dE_FAMI: string | null;
+    dE_SFAM: string | null;
+    cO_PROV: string;
+    nO_PROV: string;
+    dE_ORIG: string;
+    dE_MARC: string;
+    cO_SAPS: string | null;
+    cO_ITEM: string | null;
+    dE_ITEM: string | null;
+    nU_ORDE_COMP: number;
+    dE_OBSE: string;
+    sT_ORDE: string;
+    cA_ORDE: number;
+    cA_FACT: number;
+    cA_INGR: number;
+    cA_PEND: number;
+    cO_MONE: string;
+    iM_UNIT: number;
+    iM_TOTA_FOBS: number;
+    fE_EMIS: string | null;
+    fE_LLEG: string | null;
+    fE_ZARP: string | null;
+    fE_ARRI: string | null;
+    fE_ESTI: string | null;
+    tI_EMBA: string | null;
+    sT_CIERR_MANU: string;
+    fE_LLEG_FINA: string;
+    pagO_PRIMER_ADELANTO: string;
+    produccion: string;
+    inspeccioN_AQF: string;
+    segundO_PAGO: string;
+    booking: string;
+    transitO_MARITIMO: string;
+    retirO_ADUANAS: string;
+    estado: string;
+    etapa: string;
+  }
+  

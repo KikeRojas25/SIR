@@ -1,0 +1,122 @@
+
+<div class="flex flex-col flex-auto min-w-0">
+
+
+  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <div  class="flex flex-wrap items-center font-medium">
+        <div>
+          <a  class="whitespace-nowrap text-primary-500">SIR</a>
+        </div>
+        <div class="flex items-center ml-1 whitespace-nowrap">
+              <mat-icon
+              class="fuse-horizontal-navigation-item-icon"
+              [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+              <a  class="ml-1 text-primary-500">Reportes</a>
+          </div>
+      </div>
+          <div class="mt-2"><h2  class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"> Base Ingreso </h2>
+      </div>
+  </div>
+  </div>
+
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+  
+  
+        <div class=" flex flex-col">
+          <label for="rubro" class="font-bold">Estado:</label>
+          <p-dropdown name="estados" 
+          [options]="estados" 
+          [(ngModel)]="model.idestado" 
+          [scrollHeight]="'200px'"
+          [showClear]="true" 
+          [style]="{'width': '100%', 'min-width' : '250px'}" 
+          [resetFilterOnHide]="false"
+          [hideTransitionOptions]="'0ms'"
+          [showTransitionOptions]="'0ms'"
+            placeholder="Seleccione un estado" 
+            >
+            <ng-template let-item pTemplate="selectedItem">
+              <span style="vertical-align:left;">{{item.label}}</span>
+          </ng-template>
+          
+          </p-dropdown>
+        </div>
+
+
+        <div class=" flex flex-col">
+          <label for="rubro" class="font-bold">Inicio:</label>
+          <p-calendar  [(ngModel)]="model.dateinicio"   dateFormat="dd.mm.yy" />  
+        </div>
+        
+        <div class=" flex flex-col">
+          <label for="rubro" class="font-bold">Fin:</label>
+          <p-calendar  [(ngModel)]="model.datefin"   dateFormat="dd.mm.yy" />  
+        </div>
+        <div class="flex flex-col">
+          <label for="sucursal" class="font-semibold mb-1">Sucursal</label>
+          <p-dropdown
+            [options]="sucursales"
+            [(ngModel)]="model.idsucursal" 
+            placeholder="Seleccione Sucursal"
+            [showClear]="true"
+            (onChange)="selectAlmacen($event)"
+            [style]="{'width': '100%'}">
+
+
+            <ng-template let-item pTemplate="selectedItem">
+              <span>{{ item.label }}</span>
+            </ng-template>
+
+
+          </p-dropdown>
+
+         
+        </div>
+
+        <!-- Almacén -->
+        <div class="flex flex-col">
+          <label for="almacen" class="font-semibold mb-1">Almacén</label>
+          <p-dropdown
+            [options]="almacenes"
+            [(ngModel)]="model.idalmacen" 
+            placeholder="Seleccione Almacén"
+            [showClear]="true"
+            [style]="{'width': '100%'}">
+
+            <ng-template let-item pTemplate="selectedItem">
+              <span>{{ item.label }}</span>
+            </ng-template>
+
+
+          </p-dropdown>
+
+         
+        </div>
+
+
+        
+      <!-- Buscar Button -->
+      <div class=" flex flex-col mt-3">
+        <p-button severity="success"   label="Buscar" icon="fa fa-search"  (click)="buscar()" 
+         ></p-button>
+      </div>  
+      
+
+</div>  
+
+<div class="flex flex-col p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+
+
+
+  
+
+
+
+</div>
+
+</div>
+
+
+

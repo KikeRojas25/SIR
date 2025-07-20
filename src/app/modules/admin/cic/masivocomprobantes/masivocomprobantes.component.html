@@ -1,0 +1,311 @@
+<div class="flex flex-col flex-auto min-w-0">
+
+    <!-- ENCABEZADO PRINCIPAL -->
+    <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b">
+      <div class="flex-1 min-w-0">
+        <div class="flex flex-wrap items-center font-medium">
+          <div>
+            <a class="whitespace-nowrap text-primary-500">Rash</a>
+          </div>
+          <div class="flex items-center ml-1 whitespace-nowrap">
+            <mat-icon class="fuse-horizontal-navigation-item-icon" [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+            <a class="ml-1 text-primary-500">Listado de OCs de importación</a>
+          </div>
+        </div>
+        <div class="mt-2">
+          <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+            OCs de Importación
+          </h2>
+        </div>
+      </div>
+    </div>
+  
+    <form [formGroup]="form" (ngSubmit)="procesarFormulario()" class="flex flex-col flex-auto min-w-0">
+
+    <!-- CONTENEDOR PRINCIPAL: 2 COLUMNAS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-6">
+  
+      <!-- COLUMNA IZQUIERDA: INFORMACIÓN GENERAL -->
+      <div class="p-4 border rounded shadow-sm bg-white">
+        <h2 class="text-lg font-bold mb-4">Información General</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          
+          <!-- N° Guía -->
+          <div class="flex flex-col">
+            <label for="numeroGuia" class="font-semibold mb-1">N° Guía</label>
+            <input pInputText id="numeroGuia"   formControlName="numeroGuia"  placeholder="Ingrese N° Guía" class="w-full" />
+            <div *ngIf="form.get('numeroGuia')?.invalid && form.get('numeroGuia')?.touched" class="text-red-500 text-sm mt-1">
+             Ingrese una guía
+             </div>
+          </div>
+  
+          <!-- Origen -->
+          <div class="flex flex-col">
+            <label for="origen" class="font-semibold mb-1">Origen</label>
+            <p-dropdown
+              [options]="origenes"
+              formControlName="idorigen"
+              placeholder="Seleccione Origen"
+              [showClear]="true"
+              [style]="{'width': '100%'}">
+
+              <ng-template let-item pTemplate="selectedItem">
+                <span>{{ item.label }}</span>
+              </ng-template>
+
+              
+            </p-dropdown>
+            <div *ngIf="form.get('idorigen')?.invalid && form.get('idorigen')?.touched" class="text-red-500 text-sm mt-1">
+             Seleccione un origen
+            </div>
+          </div>
+  
+          <!-- Producto -->
+          <div class="flex flex-col">
+            <label for="producto" class="font-semibold mb-1">Producto</label>
+            <p-dropdown
+              [options]="productos"
+              formControlName="idproducto"
+              virtualScroll="true"
+              placeholder="Seleccione Producto"
+              [showClear]="true"
+              [filter]="true"
+              [style]="{'width': '100%'}">
+
+              <ng-template let-item pTemplate="selectedItem">
+                <span>{{ item.label }}</span>
+              </ng-template>
+
+              
+
+
+            </p-dropdown>
+            <div *ngIf="form.get('idproducto')?.invalid && form.get('idproducto')?.touched" class="text-red-500 text-sm mt-1">
+              Seleccione un producto
+              </div>
+          </div>
+  
+          <!-- Fabricante -->
+          <div class="flex flex-col">
+            <label for="fabricante" class="font-semibold mb-1">Fabricante</label>
+            <p-dropdown
+              [options]="partners"
+             
+              formControlName="idfabricante"
+              placeholder="Seleccione Fabricante"
+              [showClear]="true"
+              [style]="{'width': '100%'}">
+
+              <ng-template let-item pTemplate="selectedItem">
+                <span>{{ item.label }}</span>
+              </ng-template>
+
+              
+
+
+            </p-dropdown>
+
+            <div *ngIf="form.get('idfabricante')?.invalid && form.get('idfabricante')?.touched" class="text-red-500 text-sm mt-1">
+              Seleccione un fabricante
+              </div>
+          </div>
+  
+          <!-- Cliente -->
+          <div class="flex flex-col">
+            <label for="cliente" class="font-semibold mb-1">Cliente</label>
+            <p-dropdown
+              [options]="clientes"
+              formControlName="idcliente"
+              placeholder="Seleccione Cliente"
+              [showClear]="true"
+              [style]="{'width': '100%'}">
+
+              <ng-template let-item pTemplate="selectedItem">
+                <span>{{ item.label }}</span>
+              </ng-template>
+
+              
+            </p-dropdown>
+            <div *ngIf="form.get('idcliente')?.invalid && form.get('idcliente')?.touched" class="text-red-500 text-sm mt-1">
+              Seleccione un fabricante
+              </div>
+          </div>
+  
+          <!-- Partner -->
+          <div class="flex flex-col">
+            <label for="partner" class="font-semibold mb-1">Partner</label>
+            <p-dropdown
+              [options]="partners"
+              formControlName="idpartner"
+              placeholder="Seleccione Partner"
+              [showClear]="true"
+              [style]="{'width': '100%'}">
+
+              <ng-template let-item pTemplate="selectedItem">
+                <span>{{ item.label }}</span>
+              </ng-template>
+
+
+            </p-dropdown>
+            <div *ngIf="form.get('idpartner')?.invalid && form.get('idpartner')?.touched" class="text-red-500 text-sm mt-1">
+              Seleccione un partner
+              </div>
+          </div>
+        </div>
+      </div>
+  
+      <!-- COLUMNA DERECHA: RECEPCIÓN DE DOCUMENTOS -->
+      <div class="p-4 border rounded shadow-sm bg-white">
+        <h2 class="text-lg font-bold mb-4">Recepción de Documentos</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  
+          <!-- Sucursal -->
+          <div class="flex flex-col">
+            <label for="sucursal" class="font-semibold mb-1">Sucursal</label>
+            <p-dropdown
+              [options]="sucursales"
+              formControlName="idsucursal"
+              placeholder="Seleccione Sucursal"
+              [showClear]="true"
+              (onChange)="selectAlmacen($event)"
+              [style]="{'width': '100%'}">
+
+
+              <ng-template let-item pTemplate="selectedItem">
+                <span>{{ item.label }}</span>
+              </ng-template>
+
+
+            </p-dropdown>
+
+            <div *ngIf="form.get('idsucursal')?.invalid && form.get('idsucursal')?.touched" class="text-red-500 text-sm mt-1">
+              Seleccione una sucursal
+              </div>
+          </div>
+  
+          <!-- Almacén -->
+          <div class="flex flex-col">
+            <label for="almacen" class="font-semibold mb-1">Almacén</label>
+            <p-dropdown
+              [options]="almacenes"
+              formControlName="idalmacen"
+              placeholder="Seleccione Almacén"
+              [showClear]="true"
+              [style]="{'width': '100%'}">
+
+              <ng-template let-item pTemplate="selectedItem">
+                <span>{{ item.label }}</span>
+              </ng-template>
+
+
+            </p-dropdown>
+
+            <div *ngIf="form.get('idalmacen')?.invalid && form.get('idalmacen')?.touched" class="text-red-500 text-sm mt-1">
+              Seleccione un almacén
+              </div>
+          </div>
+  
+          <!-- Fecha Recepción -->
+          <div class="flex flex-col">
+            <label for="fechaRecepcion" class="font-semibold mb-1">Fecha Recepción</label>
+            <p-calendar
+              formControlName="fechaRecepcion"
+              dateFormat="dd/mm/yy"
+              placeholder="Seleccione Fecha"
+              inputId="fechaRecepcion"
+              [style]="{'width': '100%'}">
+            </p-calendar>
+
+            <div *ngIf="form.get('fechaRecepcion')?.invalid && form.get('fechaRecepcion')?.touched" class="text-red-500 text-sm mt-1">
+              Seleccione una fecha de recepción
+              </div>
+          </div>
+  
+          <!-- Subir Archivo -->
+          <div class="flex flex-col">
+            <label class="font-semibold mb-1">Subir Archivo</label>
+              <p-fileUpload
+              name="myfile[]"
+              #fileUpload
+              [multiple]="false"
+              accept=".xlsx, .xls"
+              customUpload="true"
+              (onSelect)="onSelectedFiles($event)">
+
+              <!-- Encabezado simplificado -->
+              <ng-template pTemplate="header" let-files let-chooseCallback="chooseCallback" let-clearCallback="clearCallback">
+              <div class="flex justify-between items-center w-full gap-2">
+              <div class="flex gap-2">
+                <p-button (onClick)="choose($event, chooseCallback)" icon="pi pi-folder-open" [rounded]="true" [outlined]="true" styleClass="p-button-sm"></p-button>
+                <p-button (onClick)="uploadSelectedFiles()" icon="pi pi-upload" [rounded]="true" [outlined]="true" severity="success" [disabled]="!files || files.length === 0" styleClass="p-button-sm"></p-button>
+                <p-button (onClick)="clearCallback()" icon="pi pi-times" [rounded]="true" [outlined]="true" severity="danger" [disabled]="!files || files.length === 0" styleClass="p-button-sm"></p-button>
+              </div>
+           
+              </div>
+              </ng-template>
+
+              <!-- Lista simple de archivos -->
+              <ng-template pTemplate="content" let-files let-removeFileCallback="removeFileCallback">
+              <ul *ngIf="files?.length > 0" class="p-0 m-0 list-none">
+              <li *ngFor="let file of files; let i = index" class="flex justify-between items-center border-b py-2">
+                <div class="text-sm truncate w-3/4">{{ file.name }} ({{ formatSize(file.size) }})</div>
+                <p-button icon="pi pi-times" (onClick)="onRemoveTemplatingFile($event, file, removeFileCallback, i)" severity="danger" size="small" rounded outlined></p-button>
+              </li>
+              </ul>
+              </ng-template>
+
+              <!-- Vacío -->
+              <ng-template pTemplate="empty">
+              <p class="text-sm text-gray-500 text-center">Arrastra tu archivo Excel aquí o usa el botón para elegir.</p>
+              </ng-template>
+              </p-fileUpload>
+
+          </div>
+
+          <div *ngIf="mostrarBotonProcesar" class="flex justify-end p-6">
+            <button
+              pButton
+              type="button"
+              label="Procesar Información"
+              icon="pi pi-check"
+              class="p-button-success"
+              (click)="procesarFormulario()">
+            </button>
+          </div>
+  
+ 
+        </div>
+      </div>
+    </div>
+    </form>
+    <!-- SECCIÓN INFERIOR: DETALLE DE LA CARGA -->
+    <div class="p-6">
+      <h2 class="text-lg font-bold mb-4">Detalle de la Carga</h2>
+            
+          <p-table [value]="detalles" [paginator]="true" [rows]="10" [scrollable]="true" scrollHeight="300px">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Ítem</th>
+              <th>S/N</th>
+              <th>IMEI</th>
+              <th>MAC</th>
+              <th>Producto</th>
+            </tr>
+          </ng-template>
+          <ng-template pTemplate="body" let-detalle let-i="rowIndex">
+            <tr>
+              <td>{{ i + 1 }}</td>
+              <td>{{ detalle.serie }}</td>
+              <td>{{ detalle.imei }}</td>
+              <td>{{ detalle.mac }}</td>
+              <td>{{ detalle.repuesto }}</td>
+            </tr>
+          </ng-template>
+        </p-table>
+
+    </div>
+  
+  </div>
+  
+  <p-confirmDialog />
+  <p-toast></p-toast>

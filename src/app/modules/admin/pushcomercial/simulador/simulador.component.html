@@ -1,0 +1,117 @@
+
+<div class="flex flex-col flex-auto min-w-0">
+
+
+  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <div  class="flex flex-wrap items-center font-medium">
+        <div>
+          <a  class="whitespace-nowrap text-primary-500">Rash</a>
+        </div>
+        <div class="flex items-center ml-1 whitespace-nowrap">
+              <mat-icon
+              class="fuse-horizontal-navigation-item-icon"
+              [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+              <a  class="ml-1 text-primary-500">Push Comercial</a>
+          </div>
+      </div>
+          <div class="mt-2"><h2  class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"> Simulador de PushComercial </h2>
+      </div>
+  </div>
+  </div>
+
+
+ 
+
+  <div class="grid grid-cols-1 sm:grid-cols-4 gap-6 p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+
+    <div class=" flex flex-col">
+      <label for="rubro" class="font-bold">Inicio:</label>
+    <p-calendar 
+    [(ngModel)]="model.dateinicio" 
+    dateFormat="dd.mm.yy" />
+
+
+    </div>
+   
+    <div class=" flex flex-col">
+      <label for="rubro" class="font-bold">Fin:</label>
+    <p-calendar 
+    [(ngModel)]="model.datefin" 
+    dateFormat="dd.mm.yy" />
+    </div>
+
+    <!-- Rubro Field --> 
+
+    
+ 
+  <div class=" flex flex-col">
+    <label for="rubro" class="font-bold">Rubro:</label>
+    <p-dropdown name="rubros" 
+    [options]="rubros" 
+    [(ngModel)]="model.CodRubro" 
+    [filter]="true"
+    filterBy="label" 
+    [scrollHeight]="'200px'"
+    [showClear]="true" 
+    (onChange)="onRubroChange($event)"
+    [style]="{'width': '250px'}" [resetFilterOnHide]="false"
+    [hideTransitionOptions]="'0ms'"
+    [showTransitionOptions]="'0ms'"
+       placeholder="Seleccione un Rubro" 
+      >
+      <ng-template let-item pTemplate="selectedItem">
+        <span style="vertical-align:left;">{{item.label}}</span>
+    </ng-template>
+    
+    </p-dropdown>
+  </div>
+
+  <!-- Familia Field -->
+  <div class=" flex flex-col">
+    <label for="familia" class="font-bold">Familia:</label>
+    <p-dropdown [options]="familias" 
+      [(ngModel)]="model.CodFamilia" 
+      (onChange)="onFamiliaChange($event)" 
+      placeholder="Seleccione Familia"
+      [showClear]="true" 
+      [style]="{'width': '250px'}" 
+      [resetFilterOnHide]="false"
+      [hideTransitionOptions]="'0ms'"
+      placeholder="Seleccione una Familia" 
+      [showTransitionOptions]="'0ms'"
+      [disabled]="!model.CodRubro" 
+      >
+      <ng-template let-item pTemplate="selectedItem">
+        <span style="vertical-align:left;">{{item.label}}</span>
+    </ng-template>
+    </p-dropdown>
+  </div>
+
+  <!-- Subfamilia Field -->
+  <div class=" flex flex-col">
+    <label for="subfamilia" class="font-bold">Subfamilia:</label>
+    <p-dropdown [options]="subfamilias" 
+    [(ngModel)]="model.CodSubFamilia" 
+    [showClear]="true" 
+    [style]="{'width': '250px'}" 
+      placeholder="Seleccione una Subfamilia" [disabled]="!model.CodFamilia" 
+      class="border rounded"></p-dropdown>
+  </div>
+  <div class="flex flex-col">
+    <label for="sku" class="font-bold">SKU:</label>
+    <input id="sku" type="text" pInputText [(ngModel)]="model.sku" />
+  </div>
+  <div class="flex flex-col">
+    <label for="acotado" class="font-bold">% Acotado:</label>
+    <input id="acotado" type="text" pInputText [(ngModel)]="model.acotado" />
+  </div>
+
+
+  <!-- Buscar Button -->
+  <div class=" flex flex-col">
+    <button kendoButton type="button" (click)="buscar()" 
+      class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-6">Procesar</button>
+  </div>  
+
+</div>

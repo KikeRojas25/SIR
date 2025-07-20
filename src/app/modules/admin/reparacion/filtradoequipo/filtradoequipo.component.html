@@ -1,0 +1,198 @@
+
+<div class="flex flex-col flex-auto min-w-0">
+
+
+  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <div  class="flex flex-wrap items-center font-medium">
+        <div>
+          <a  class="whitespace-nowrap text-primary-500">SIR</a>
+        </div>
+        <div class="flex items-center ml-1 whitespace-nowrap">
+              <mat-icon
+              class="fuse-horizontal-navigation-item-icon"
+              [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+              <a  class="ml-1 text-primary-500">Reparación</a>
+          </div>
+      </div>
+          <div class="mt-2"><h2  class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"> Control de Calidad </h2>
+      </div>
+  </div>
+  </div>
+
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+  
+<!--   
+        <div class=" flex flex-col">
+          <label for="rubro" class="font-bold">Estado:</label>
+          <p-dropdown name="estados" 
+          [options]="estados" 
+          [(ngModel)]="model.idestado" 
+          [scrollHeight]="'200px'"
+          [showClear]="true" 
+          [style]="{'width': '100%', 'min-width' : '250px'}" 
+          [resetFilterOnHide]="false"
+          [hideTransitionOptions]="'0ms'"
+          [showTransitionOptions]="'0ms'"
+            placeholder="Seleccione un estado" 
+            >
+            <ng-template let-item pTemplate="selectedItem">
+              <span style="vertical-align:left;">{{item.label}}</span>
+          </ng-template>
+          
+          </p-dropdown>
+        </div> -->
+
+
+        <div class=" flex flex-col">
+          <label for="rubro" class="font-bold">Inicio:</label>
+          <p-calendar  [(ngModel)]="model.dateinicio"   dateFormat="dd.mm.yy" />  
+        </div>
+        
+        <div class=" flex flex-col">
+          <label for="rubro" class="font-bold">Fin:</label>
+          <p-calendar  [(ngModel)]="model.datefin"   dateFormat="dd.mm.yy" />  
+        </div>
+
+        <div class="flex flex-col">
+          <label for="os" class="font-bold">N° Orden de servicio:</label>
+          <input id="os" type="text" pInputText [(ngModel)]="model.os" />
+        </div>
+
+
+        <div class="flex flex-col">
+          <label for="serie" class="font-bold">N° Serie:</label>
+          <input id="serie" type="text" pInputText [(ngModel)]="model.serie" />
+        </div>
+
+        
+      <!-- Buscar Button -->
+      <div class=" flex flex-col mt-3">
+        <p-button severity="success"   label="Buscar" icon="fa fa-search"  (click)="buscar()" 
+         ></p-button>
+      </div>  
+      
+
+</div>  
+
+<div class="flex flex-col p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+
+
+
+  
+  <p-table class="custom-table" [columns]="cols" [scrollable]="true" [style]="{width:'100%'}"
+  sortField="idordenserviciotecnico" [value]="ordenes" #dt [paginator]="true"
+  dataKey="idordenserviciotecnico" selectionMode="single"
+  [rowsPerPageOptions]="[20,40,60,90, 120]"
+  [tableStyle]="{ 'table-layout': 'fixed', 'width': '100%' }"
+  [globalFilterFields]="['nU_ORDE_COMP','dE_ITEM']"
+  [rows]="20"  [responsive]="true">
+
+
+    <ng-template pTemplate="header" let-columns>
+      <tr>
+          <th style="text-align: center; color: white;" [ngStyle]="{'width': col.width, 'background-color': col.backgroundcolor }" *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
+              {{col.header}}
+          </th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing" let-rowIndex="rowIndex">
+      <tr [pSelectableRow]="rowData">
+        <td class="ui-resizable-column"> {{ rowData.numeroost }} </td>
+    
+          <td class="ui-resizable-column"> {{ rowData.imei }} </td>
+          <td class="ui-resizable-column"> {{ rowData.producto }} </td>
+          <td class="ui-resizable-column"> {{ rowData.serie }} </td>
+    
+          <td class="ui-resizable-column" [ngClass]="getEstadoClass(rowData.otestado)">
+            {{ rowData.ostestado }}
+          </td>
+          
+          
+          <td class="ui-resizable-column">
+            {{ rowData.fechaAsignacion ? (rowData.fechaAsignacion | date: 'dd/MM/yyyy') : 'Fecha no disponible' }}
+          </td>
+          <td class="ui-resizable-column"> {{ rowData.tecnicoAsignado }} </td>
+          <td class="ui-resizable-column" style="text-align: center; vertical-align: middle;">
+            <ng-container [ngSwitch]="rowData.ostestado">
+          
+              <!-- Si está Detenida, mostrar botón con label "Continuar" -->
+              <p-button *ngIf="rowData.ostestado === 'Pend. Proceso QC' "
+                      
+                      severity="warning"
+                      size="small"
+                      iconClass="fa fa-play"
+                        (click)="iniciar(rowData)"
+                      label="QC">
+            </p-button>
+          
+            <!-- <div *ngIf="rowData.otestado === 'Completada'" style="text-align: center; display: flex; justify-content: center; align-items: center;">
+              <i class="pi pi-check-circle" style="color: green; font-size: 1.2rem;" title="Completada"></i>
+            </div> -->
+          
+              <p-button *ngIf="rowData.ostestado === 'Pend. Despacho al Cliente' "
+                    severity="danger"
+                    size="small"
+                    iconClass="fa fa-search"
+                    (click)="iniciar(rowData)"
+                    label="Finalizar">
+          </p-button>
+          
+            </ng-container>
+      </tr>
+    </ng-template>
+</p-table>
+
+
+
+
+</div>
+
+</div>
+
+
+<p-dialog 
+  header="Aprobar QC" 
+  [(visible)]="visible" 
+  [modal]="true" 
+  [style]="{ width: '600px' }">
+
+  <p class="text-sm text-gray-600 mb-4">Realice la verificación de la operación realizada por los técnicos.</p>
+
+  <div class="grid grid-cols-2 gap-4 mb-4">
+    <div>
+      <strong>N° OST</strong>
+      <div class="text-2xl">{{ datosQC.ost }}</div>
+    </div>
+    <div>
+      <strong>Producto</strong>
+      <div class="text-2xl">{{ datosQC.producto }}</div>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div *ngFor="let item of preguntasIzquierda">
+      <label>{{ item.texto }}</label><br />
+      <p-radioButton name="{{item.campo}}" value="true" [(ngModel)]="respuestas[item.campo]" label="Sí"></p-radioButton>
+      <p-radioButton name="{{item.campo}}" value="false" [(ngModel)]="respuestas[item.campo]" label="No"></p-radioButton>
+    </div>
+
+    <div *ngFor="let item of preguntasDerecha">
+      <label>{{ item.texto }}</label><br />
+      <p-radioButton name="{{item.campo}}" value="true" [(ngModel)]="respuestas[item.campo]" label="Sí"></p-radioButton>
+      <p-radioButton name="{{item.campo}}" value="false" [(ngModel)]="respuestas[item.campo]" label="No"></p-radioButton>
+    </div>
+  </div>
+
+  <div class="flex justify-end gap-2 mt-4">
+    <p-button label="Guardar" (click)="guardarQC()" />
+    <p-button label="Cerrar" severity="secondary" (click)="visible = false" />
+  </div>
+</p-dialog>
+
+
+
+<p-confirmDialog />
+<p-toast></p-toast>

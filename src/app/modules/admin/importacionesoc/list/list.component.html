@@ -1,0 +1,355 @@
+
+<div class="flex flex-col flex-auto min-w-0">
+
+
+  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <div  class="flex flex-wrap items-center font-medium">
+        <div>
+          <a  class="whitespace-nowrap text-primary-500">Rash</a>
+        </div>
+        <div class="flex items-center ml-1 whitespace-nowrap">
+              <mat-icon
+              class="fuse-horizontal-navigation-item-icon"
+              [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+              <a  class="ml-1 text-primary-500">Listado de OCs de importación</a>
+          </div>
+      </div>
+          <div class="mt-2"><h2  class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"> OCs de Importación </h2>
+      </div>
+  </div>
+  </div>
+
+
+ 
+
+<div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+
+
+
+    <!-- OC Field -->
+    <div class="flex flex-col">
+      <label for="oc" class="font-bold">OC:</label>
+      <input id="oc" type="text" pInputText [(ngModel)]="model.NumOrdenCompra"  />
+    </div>
+  
+    <!-- SKU Field -->
+    <div class="flex flex-col">
+      <label for="sku" class="font-bold">SKU:</label>
+      <input id="sku" type="text" pInputText [(ngModel)]="model.sku" />
+    </div>
+  
+    <!-- Rubro Field -->
+    <div class=" flex flex-col">
+      <label for="rubro" class="font-bold">Rubro:</label>
+      <p-dropdown name="rubros" 
+      [options]="rubros" 
+      [(ngModel)]="model.CodRubro" 
+      [filter]="true"
+      filterBy="label" 
+      [showClear]="true" 
+      (onChange)="onRubroChange($event)"
+      [style]="{'width': '250px'}" [resetFilterOnHide]="false"
+      [hideTransitionOptions]="'0ms'"
+      [showTransitionOptions]="'0ms'"
+         placeholder="Seleccione un Rubro" 
+        >
+        <ng-template let-item pTemplate="selectedItem">
+          <span style="vertical-align:left;">{{item.label}}</span>
+      </ng-template>
+      
+      </p-dropdown>
+    </div>
+  
+    <!-- Familia Field -->
+    <div class=" flex flex-col">
+      <label for="familia" class="font-bold">Familia:</label>
+      <p-dropdown [options]="familias" 
+        [(ngModel)]="model.CodFamilia" 
+        (onChange)="onFamiliaChange($event)" 
+        placeholder="Seleccione Familia"
+        [showClear]="true" 
+        [style]="{'width': '250px'}" 
+        [resetFilterOnHide]="false"
+        [hideTransitionOptions]="'0ms'"
+        placeholder="Seleccione una Familia" 
+        [showTransitionOptions]="'0ms'"
+        [disabled]="!selectedRubro" 
+        >
+        <ng-template let-item pTemplate="selectedItem">
+          <span style="vertical-align:left;">{{item.label}}</span>
+      </ng-template>
+      </p-dropdown>
+    </div>
+  
+    <!-- Subfamilia Field -->
+    <div class=" flex flex-col">
+      <label for="subfamilia" class="font-bold">Subfamilia:</label>
+      <p-dropdown [options]="subfamilias" 
+      [(ngModel)]="model.CodSubFamilia" 
+      [showClear]="true" 
+      [style]="{'width': '250px'}" 
+        placeholder="Seleccione una Subfamilia" [disabled]="!selectedFamilia" 
+        class="border rounded"></p-dropdown>
+    </div>
+  
+    <!-- Buscar Button -->
+    <div class=" flex flex-col">
+      <button kendoButton type="button" (click)="buscar()" 
+        class="bg-blue-500 text-white font-bold py-2 px-4 rounded mt-6">Buscar</button>
+    </div>
+    
+  </div>
+  
+  <div class="flex flex-col p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+
+    <div class="button-group mb-4">
+      <p-button  label="Enviar a Importaciones" icon="fa fa-paper-plane" (onClick)="enviarImportaciones()">
+     
+      </p-button>
+      <p-button   class="mr-2 mb-2"  iconClass="fa fa-money" (onClick)="solicitarPrimeraPago()">
+        Solicitud Primera Pago
+      </p-button>
+      <p-button  kendoButton class="mr-2 mb-2"  iconClass="fa fa-file" (onClick)="enviarSustentoFinanzas()">
+        Envío de Sustento a Finanzas
+      </p-button>
+
+      <p-button  kendoButton class="mr-2 mb-2"  iconClass="pi pi-dollar" (onClick)="enviarSustentoFinanzas()">
+        1er Pago
+      </p-button>
+
+      <p-button  kendoButton class="mr-2 mb-2"  iconClass="fa fa-file" (onClick)="enviarSustentoFinanzas()">
+         Inicio producción
+      </p-button>
+
+      <p-button  kendoButton class="mr-2 mb-2"  iconClass="fa fa-file" (onClick)="enviarSustentoFinanzas()">
+        Artes producción
+     </p-button>
+
+     <p-button on kendoButton class="mr-2 mb-2"  iconClass="pi pi-dollar" (onClick)="enviarSustentoFinanzas()">
+      2do Pago
+    </p-button>
+     
+     <p-button  kendoButton class="mr-2 mb-2"  iconClass="fa fa-file" (onClick)="enviarSustentoFinanzas()">
+      Travesía
+   </p-button>
+
+
+
+
+
+    </div>
+
+
+    <p-table class="custom-table" [columns]="cols" [scrollable]="true" [style]="{width:'100%'}"
+    sortField="nU_ORDE_COMP" [value]="ocResults" #dt [paginator]="true"
+    dataKey="nU_ORDE_COMP" selectionMode="single"
+    [(selection)]="selectedOC" 
+    editMode="row" [rowsPerPageOptions]="[20,40,60,90, 120]"
+    [tableStyle]="{ 'table-layout': 'fixed', 'width': '100%' }"
+    [globalFilterFields]="['nU_ORDE_COMP','dE_ITEM']"
+    [rows]="20"  [responsive]="true">
+
+
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th style="text-align: center; color: white;" [ngStyle]="{'width': col.width, 'background-color': col.backgroundcolor }" *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
+                {{col.header}}
+            </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing" let-rowIndex="rowIndex">
+        <tr [pSelectableRow]="rowData">
+            <td class="ui-resizable-column">
+                <button kendoButton themeColor="primary"  size="small" iconClass="fa fa-search"  (click)="verDetalle(rowData)"></button>
+                <button kendoButton themeColor="secondary"  size="small" iconClass="fa fa-file"  (click)="onEditDates(rowData)"></button>
+                <button kendoButton themeColor="success"  size="small" iconClass="fa fa-history"  (click)="verCicloVida(rowData)"></button>
+            </td>
+            <td class="ui-resizable-column"> {{ rowData.etapa }} </td>
+            <td class="ui-resizable-column"> {{ rowData.estado }} </td>
+            <td class="ui-resizable-column"> {{ rowData.nU_ORDE_COMP }} </td>
+            <td class="ui-resizable-column"> {{ rowData.sT_ORDE }} </td>
+            <td class="ui-resizable-column"> {{ rowData.dE_RUBR }} </td>
+            <!-- <td class="ui-resizable-column"> {{ rowData.dE_FAMI }} </td>
+            <td class="ui-resizable-column"> {{ rowData.dE_SFAM }} </td> -->
+            <td class="ui-resizable-column"> {{ rowData.cO_PROV }} </td>
+            <td class="ui-resizable-column"> {{ rowData.nO_PROV }} </td>
+            <td class="ui-resizable-column"> {{ rowData.dE_ORIG }} </td>
+            <td class="ui-resizable-column"> {{ rowData.dE_MARC }} </td>
+            <!-- <td class="ui-resizable-column"> {{ rowData.cO_SAPS }} </td>
+            <td class="ui-resizable-column"> {{ rowData.cO_ITEM }} </td>
+            <td class="ui-resizable-column"> {{ rowData.dE_ITEM }} </td>
+            <td class="ui-resizable-column"> {{ rowData.dE_OBSE }} </td> -->
+            <td class="ui-resizable-column"> {{ rowData.cA_ORDE }} </td>
+            <td class="ui-resizable-column"> {{ rowData.cA_FACT }} </td>
+            <td class="ui-resizable-column"> {{ rowData.cA_INGR }} </td>
+            <td class="ui-resizable-column"> {{ rowData.cA_PEND }} </td>
+            <td class="ui-resizable-column"> {{ rowData.cO_MONE }} </td>
+            <td class="ui-resizable-column"> {{ rowData.iM_UNIT }} </td>
+            <td class="ui-resizable-column"> {{ rowData.iM_TOTA_FOBS }} </td>
+            <td class="ui-resizable-column"> {{ rowData.fE_EMIS ? (rowData.fE_EMIS | date:'dd/MM/yyyy') : 'Fecha no disponible' }} </td>
+            <td class="ui-resizable-column"> {{ rowData.fE_LLEG ? (rowData.fE_LLEG | date:'dd/MM/yyyy') : 'Fecha no disponible' }} </td>
+            <td class="ui-resizable-column"> {{ rowData.fE_ZARP ? (rowData.fE_ZARP | date:'dd/MM/yyyy') : 'Fecha no disponible' }} </td>
+            <td class="ui-resizable-column"> {{ rowData.fE_ARRI ? (rowData.fE_ARRI | date:'dd/MM/yyyy') : 'Fecha no disponible' }} </td>
+            <td class="ui-resizable-column"> {{ rowData.fE_ESTI ? (rowData.fE_ESTI | date:'dd/MM/yyyy') : 'Fecha no disponible' }} </td>
+            <td class="ui-resizable-column"> {{ rowData.tI_EMBA }} </td>
+            <td class="ui-resizable-column"> {{ rowData.fE_LLEG_FINA ? (rowData.fE_LLEG_FINA | date:'shortDate') : 'Fecha no disponible' }} </td>
+            <td class="ui-resizable-column"> {{ rowData.pagoPrimerAdelanto ? (rowData.pagoPrimerAdelanto | date:'dd/MM/yyyy') : 'Fecha no disponible' }} </td>
+            <td class="ui-resizable-column"> {{ rowData.produccion ? (rowData.produccion | date:'dd/MM/yyyy') : 'Fecha no disponible' }} </td>
+            <td class="ui-resizable-column"> {{ rowData.inspeccionAQF ? (rowData.inspeccionAQF | date:'dd/MM/yyyy') : 'Fecha no disponible' }} </td>
+            <td class="ui-resizable-column"> {{ rowData.segundoPago ? (rowData.segundoPago | date:'dd/MM/yyyy') : 'Fecha no disponible' }} </td>
+            <td class="ui-resizable-column"> {{ rowData.booking ? (rowData.booking | date:'dd/MM/yyyy') : 'Fecha no disponible' }} </td>
+            <td class="ui-resizable-column"> {{ rowData.transitoMaritimo ? (rowData.transitoMaritimo | date:'dd/MM/yyyy') : 'Fecha no disponible' }} </td>
+            <td class="ui-resizable-column"> {{ rowData.retiroAduanas ? (rowData.retiroAduanas | date:'dd/MM/yyyy') : 'Fecha no disponible' }} </td>
+        </tr>
+      </ng-template>
+</p-table>
+
+
+
+</div>
+
+
+
+    
+</div>
+
+
+
+<p-dialog header="Ver detalle de OC" [modal]="true" [(visible)]="detalleOCModal" [style]="{ width: '100rem' }">
+  <span class="p-text-secondary block mb-5">Update your information.</span>
+  <div class="flex align-items-center gap-3 mb-3">
+      
+    <p-table class="custom-table" [columns]="cols2" [scrollable]="true" [style]="{width:'100%'}"
+    sortField="nU_ORDE_COMP" [value]="Items" #dt [paginator]="true"
+    dataKey="nU_ORDE_COMP" selectionMode="single"
+    editMode="row" [rowsPerPageOptions]="[20,40,60,90, 120]"
+    [globalFilterFields]="['nU_ORDE_COMP','dE_ITEM']"
+    [rows]="20" [resizableColumns]="true" [responsive]="true">
+
+
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+            <th style="text-align: center; color: white;" [ngStyle]="{'width': col.width, 'background-color': col.backgroundcolor }" *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.field">
+                {{col.header}}
+            </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-rowData let-columns="columns" let-editing="editing" let-rowIndex="rowIndex">
+        <tr [pSelectableRow]="rowData">
+          
+            <td class="ui-resizable-column"> {{ rowData.nuOrdeComp }} </td>
+            <td class="ui-resizable-column"> {{ rowData.coItem }} </td>
+            <td class="ui-resizable-column"> {{ rowData.deItem }} </td>
+            <td class="ui-resizable-column"> {{ rowData.cA_ORDE }} </td>
+            <td class="ui-resizable-column"> {{ rowData.cA_INGR }} </td>
+          
+            <td class="ui-resizable-column"> USD {{ rowData.iM_UNIT }} </td>
+
+            <td class="ui-resizable-column"> USD {{ rowData.iM_UNIT  *  rowData.cA_ORDE }} </td>
+
+        </tr>
+      </ng-template>
+</p-table>
+
+  </div> 
+</p-dialog>
+<p-dialog header="Ciclo de vida de la OC" [modal]="true" [(visible)]="CicloVidaOCModal" [style]="{ width: '100rem' }">
+  <div class="p-d-flex p-flex-column p-align-start p-m-3">
+    <!-- Timeline Planificado -->
+    <div class="timeline-container p-mb-4">
+      <h4>Planificado</h4>
+      <p-timeline [value]="events" layout="horizontal" class="p-timeline p-w-full" align="left">
+        <ng-template pTemplate="marker" let-event>
+          <span
+            class="p-d-flex p-align-items-center p-justify-content-center p-text-white p-border-circle p-shadow-1"
+            [style]="{ 'background-color': event.color }">
+            <i [class]="event.icon" style="color: white; padding: 0.5rem;"></i>
+          </span>
+        </ng-template>
+        <ng-template pTemplate="content" let-event>
+          <div class="p-card p-mb-3 p-shadow-2 p-p-2" style="width: 12rem;">
+            <div class="p-card-header">
+              <h5 class="p-m-0" style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem;">{{ event.status }}</h5>
+            </div>
+            <div class="p-card-body">
+              <p class="p-m-0" style="font-size: 0.8rem; margin: 0;">{{ event.date | date:'dd/MM/yyyy' }}</p>
+            </div>
+          </div>
+        </ng-template>
+      </p-timeline>
+      
+      
+    </div>
+
+
+    
+    <!-- Timeline Bifurcado -->
+    <div class="timeline-container">
+      <h4>Ejecutado</h4>
+      <p-timeline [value]="events2" layout="horizontal" class="p-timeline p-w-full" align="left">
+        <ng-template pTemplate="marker" let-event>
+          <span
+            class="p-d-flex p-align-items-center p-justify-content-center p-text-white p-border-circle p-shadow-1"
+            [style]="{ 'background-color': event.color }">
+            <i [class]="event.icon" style="color: white; padding: 0.5rem;"></i>
+          </span>
+        </ng-template>
+        <ng-template pTemplate="content" let-event>
+          <div class="p-card p-mb-3 p-shadow-2 p-p-2" style="width: 12rem;">
+            <div class="p-card-header">
+              <h5 class="p-m-0" style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem;">{{ event.status }}</h5>
+            </div>
+            <div class="p-card-body">
+              <p class="p-m-0" style="font-size: 0.8rem; margin: 0;">{{ event.date | date:'dd/MM/yyyy' }}</p>
+              <p class="p-mt-2 p-mb-0" style="font-size: 0.8rem; font-weight: 600;">Aprobado por: {{ event.approvedBy }}</p>
+            </div>
+            <button (click)="downloadFile(event.fileUrl)" class="p-button p-button-icon p-mt-2" aria-label="Download file">
+              <i class="pi pi-download" style="font-size: 1rem;"></i>
+            </button>
+          </div>
+        
+        </ng-template> 
+      </p-timeline>
+    </div>
+
+
+    <!-- Timeline Real -->
+    <div class="timeline-container">
+      <h4>Real</h4>
+      <p-timeline [value]="events2" layout="horizontal" class="p-timeline p-w-full" align="left">
+        <ng-template pTemplate="marker" let-event>
+          <span
+            class="p-d-flex p-align-items-center p-justify-content-center p-text-white p-border-circle p-shadow-1"
+            [style]="{ 'background-color': event.color }">
+            <i [class]="event.icon" style="color: white; padding: 0.5rem;"></i>
+          </span>
+        </ng-template>
+        <ng-template pTemplate="content" let-event>
+          <div class="p-card p-mb-3 p-shadow-2 p-p-2" style="width: 12rem;">
+            <div class="p-card-header">
+              <h5 class="p-m-0" style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.25rem;">{{ event.status }}</h5>
+            </div>
+            <div class="p-card-body">
+              <p class="p-m-0" style="font-size: 0.8rem; margin: 0;">{{ event.date | date:'dd/MM/yyyy' }}</p>
+              <p class="p-mt-2 p-mb-0" style="font-size: 0.8rem; font-weight: 600;">Aprobado por: {{ event.approvedBy }}</p>
+            </div>
+            <button (click)="downloadFile(event.fileUrl)" class="p-button p-button-icon p-mt-2" aria-label="Download file">
+              <i class="pi pi-download" style="font-size: 1rem;"></i>
+            </button>
+          </div>
+        
+        </ng-template> 
+      </p-timeline>
+    </div>
+
+
+
+
+
+
+  </div>
+</p-dialog>
+<p-toast />
