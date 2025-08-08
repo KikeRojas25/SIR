@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
-import { CambiarTecnicoDto, FinalizarReparacionRequest, ListarOrdenTrabajoDetalleResult, ReparacionRequest, UsuarioDto } from './reparacion.types';
+import { AprobarQcDto, CambiarTecnicoDto, FinalizarReparacionRequest, ListarOrdenTrabajoDetalleResult, ReparacionRequest, UsuarioDto } from './reparacion.types';
 
 
 
@@ -195,6 +195,26 @@ cambiarTecnico(dto: CambiarTecnicoDto): Observable<any> {
   
   listarOrdenTrabajoDetalle(idOrdenTrabajo: number): Observable<ListarOrdenTrabajoDetalleResult[]> {
     return this._httpClient.get<ListarOrdenTrabajoDetalleResult[]>(`${this.baseUrl}detalle/${idOrdenTrabajo}`);
+  }
+  aprobarQC(dto: AprobarQcDto): Observable<{ res: boolean; mensaje: string }> {
+    return this._httpClient.post<{ res: boolean; mensaje: string }>(`${this.baseUrl}aprobar-qc`, dto,  httpOptions);
+  }
+
+  asignarIrreparable(idOrdenServicio: number): Observable<{ res: boolean; mensaje: string }> {
+  return this._httpClient.post<{ res: boolean; mensaje: string }>(
+    `${this.baseUrl}asignar-irreparable`, 
+    idOrdenServicio, httpOptions
+  );
+}
+  asignarRemozado(idOrdenServicio: number): Observable<{ res: boolean; mensaje: string }> {
+    return this._httpClient.post<{ res: boolean; mensaje: string }>(
+      `${this.baseUrl}asignar-remozado`, 
+      idOrdenServicio, httpOptions
+    );
+  }
+
+  obtenerAntecedentes(idOrdenServicio: number): Observable<any> {
+  return this._httpClient.get(`${this.baseUrl}antecedentes/${idOrdenServicio}`);
   }
 
 }

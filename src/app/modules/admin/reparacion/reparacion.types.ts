@@ -31,3 +31,7 @@ export interface FinalizarReparacionRequest {
   descripcion: string;
   informeTecnico: string;
 }
+export interface AprobarQcDto {
+  idOrdenServicio: number;
+  aprobado: boolean;
+}

@@ -13,6 +13,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { PanelModule } from 'primeng/panel';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ReparacionService } from '../reparacion.service';
 import { ActivatedRoute } from '@angular/router';
 import { FinalizarReparacionRequest } from '../reparacion.types';
@@ -35,7 +36,8 @@ import { FinalizarReparacionRequest } from '../reparacion.types';
         DialogModule,
         ToastModule,
         ConfirmDialogModule,
-        PanelModule
+        PanelModule,
+        InputTextareaModule
     
       ],
       providers: [
@@ -50,6 +52,9 @@ export class DetallepanelComponent implements OnInit {
   model: any = {};
   reparaciones: SelectItem[] = [];
   repuestos:  SelectItem[] = [];
+  antecedentes: any[] = [];
+  mostrarDialogAntecedentes = false;
+
 
   contador: any = { dias: 0, horas: 0, minutos: 0, segundos: 0 };
 intervalRef: any;
@@ -348,8 +353,97 @@ pausarReparacion() {
   });
 }
 
+confirmarRemozado() {
+  this.confirmationService.confirm({
+    message: '¿Estás seguro de que deseas marcar este producto como remozado?',
+    header: 'Confirmar remozado',
+    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: 'Sí, marcar',
+    rejectLabel: 'Cancelar',
+    accept: () => {
+      this.marcarRemozado(this.id);
+    }
+  });
+}
+
+confirmarIrreparable() {
+
+  this.confirmationService.confirm({
+    message: '¿Estás seguro de que deseas marcar este producto como irreparable?',
+    header: 'Confirmar acción',
+    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: 'Sí, marcar',
+    rejectLabel: 'Cancelar',
+    accept: () => {
+      this.marcarIrreparable(this.id);
+    }
+  });
+}
+marcarIrreparable(idOrdenServicio: number) {
+  this.reparacionService.asignarIrreparable(idOrdenServicio).subscribe({
+    next: (res) => {
+      if (res.res) {
+        
+        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: res.mensaje });  
+        this.cargarOrdenTrabajoDetalle();
 
 
+      } else {
+        this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: res.mensaje });
+      }
+    },
+    error: (err) => {
+      console.error(err);
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo procesar la operación.' });
+    }
+  });
+}
+marcarRemozado(id: number) {
+  this.reparacionService.asignarRemozado(id).subscribe({
+    next: (res) => {
+      this.messageService.add({
+        severity: res.res ? 'success' : 'warn',
+        summary: res.res ? 'Éxito' : 'Advertencia',
+        detail: res.mensaje
+      });
+        this.cargarOrdenTrabajoDetalle();
+    },
+    error: () => {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo procesar la operación.'
+      });
+    }
+  });
+}
+verAntecedentes() {
+  this.reparacionService.obtenerAntecedentes(this.id).subscribe({
+    next: (res) => {
+      if (res.res) {
+        this.antecedentes = res.data;
+        this.mostrarDialogAntecedentes = true;
+
+        console.log('Antecedentes obtenidos:', this.antecedentes);
+        
+      } else {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Aviso',
+          detail: res.mensaje
+        });
+      }
+    },
+    error: (err) => {
+      console.error(err);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo obtener los antecedentes.'
+      });
+    }
+  });
+}
 
 }
 interface DiagnosticoItem extends SelectItem<number> {

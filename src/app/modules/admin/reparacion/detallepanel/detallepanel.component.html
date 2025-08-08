@@ -1,202 +1,362 @@
-
-<div class="flex flex-col flex-auto min-w-0">
-
-
-  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
-    <div class="flex-1 min-w-0">
-      <div  class="flex flex-wrap items-center font-medium">
-        <div>
-          <a  class="whitespace-nowrap text-primary-500">Logicalis</a>
-        </div>
-        <div class="flex items-center ml-1 whitespace-nowrap">
-              <mat-icon
-              class="fuse-horizontal-navigation-item-icon"
-              [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
-              <a  class="ml-1 text-primary-500">Reparación</a>
-          </div>
-      </div>
-          <div class="mt-2"><h2  class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"> Detalle de reparación </h2>
-      </div>
-  </div>
-  </div>
-
-
-<div class="flex flex-col min-h-screen w-full bg-gray-100">
-
-  <!-- Contenedor de la parte superior -->
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 pt-4 pb-2 items-stretch">
-
-    <!-- Sección Datos Técnicos del Producto -->
-    <div class="flex flex-col h-full">
-      <div class="flex flex-col h-full border border-gray-300 rounded-lg shadow-md bg-white">
-        <div class="bg-gray-200 px-4 py-2 font-semibold text-gray-700">Datos Técnicos del Producto</div>
-        <div class="flex-1 px-4 py-2">
-          <div class="border border-gray-300 rounded-lg shadow-sm bg-white">
-            <div class="bg-gray-100 px-4 py-2 font-medium text-gray-600">Datos de Avería</div>
-            <div class="p-2 space-y-2">
-              <!-- Diagnóstico -->
-              <div>
-                <label for="diagnostico" class="block text-sm font-medium text-gray-700">Diagnóstico</label>
-                <p-dropdown id="diagnostico" [(ngModel)]="model.iddiagnostico"
-                            [options]="diagnosticos"
-                            placeholder="Seleccione un diagnóstico"
-                            filter="true" [showClear]="true"
-                            [style]="{'width': '100%', 'min-width': '250px'}"
-                            (onChange)="onDiagnosticoChange($event)">
-                  <ng-template let-item pTemplate="selectedItem">
-                    <span>{{ item.label }}</span>
-                  </ng-template>
-                </p-dropdown>
-              </div>
-
-              <!-- Reparación -->
-              <div>
-                <label for="reparacion" class="block text-sm font-medium text-gray-700">Reparación</label>
-                <p-dropdown id="reparacion" [(ngModel)]="model.idreparacion"
-                            [options]="reparaciones"
-                            placeholder="Seleccione una reparación"
-                            filter="true" [showClear]="true"
-                            [style]="{'width': '100%', 'min-width': '250px'}"
-                            (onChange)="onReparacionChange($event)">
-                  <ng-template let-item pTemplate="selectedItem">
-                    <span>{{ item.label }}</span>
-                  </ng-template>
-                </p-dropdown>
-              </div>
-
-              <!-- Repuesto -->
-              <div>
-                <label for="repuesto" class="block text-sm font-medium text-gray-700">Repuesto</label>
-                <p-dropdown id="repuesto"
-                            [options]="repuestos"  [(ngModel)]="model.idrepuesto"
-                            placeholder="Seleccione un repuesto"
-                            [style]="{'width': '100%', 'min-width': '250px'}">
-                  <ng-template let-item pTemplate="selectedItem">
-                    <span>{{ item.label }}</span>
-                  </ng-template>
-                </p-dropdown>
-              </div>
-
-              <!-- Botón agregar -->
-              <button pButton type="button" (click)="agregarDetalle()" label="Agregar" icon="pi pi-plus"
-                      class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded">
-              </button>
+<div class="flex min-w-0 flex-auto flex-col">
+    <div
+        class="bg-card flex flex-0 flex-col border-b p-6 dark:bg-transparent sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-8"
+    >
+        <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center font-medium">
+                <div>
+                    <a class="whitespace-nowrap text-primary-500">Logicalis</a>
+                </div>
+                <div class="ml-1 flex items-center whitespace-nowrap">
+                    <mat-icon
+                        class="fuse-horizontal-navigation-item-icon"
+                        [svgIcon]="'heroicons_solid:chevron-right'"
+                    ></mat-icon>
+                    <a class="ml-1 text-primary-500">Reparación</a>
+                </div>
             </div>
-          </div>
+            <div class="mt-2">
+                <h2
+                    class="truncate text-3xl font-extrabold leading-7 tracking-tight sm:leading-10 md:text-4xl"
+                >
+                    Detalle de reparación
+                </h2>
+            </div>
         </div>
-      </div>
     </div>
 
-    <!-- Sección Información -->
-    <div class="flex flex-col h-full">
-      <div class="flex flex-col h-full border border-gray-300 rounded-lg shadow-md bg-white">
-        <div class="bg-gray-200 px-4 py-2 font-semibold text-gray-700">Información</div>
-        <div class="flex-1 px-4 py-2 flex flex-col justify-between space-y-4">
-          <!-- Número OST -->
-          <div>
-            <h3 class="text-lg font-semibold text-gray-700">Nº OST</h3>
-           <h1 class="text-3xl font-bold text-gray-900">{{ numeroOSTFormateado }}</h1>
-          </div>
+    <div class="flex min-h-screen w-full flex-col bg-gray-100">
+        <!-- Contenedor de la parte superior -->
+        <div
+            class="grid grid-cols-1 items-stretch gap-4 px-4 pb-2 pt-4 md:grid-cols-2"
+        >
+            <!-- Sección Datos Técnicos del Producto -->
+            <div class="flex h-full flex-col">
+                <div
+                    class="flex h-full flex-col rounded-lg border border-gray-300 bg-white shadow-md"
+                >
+                    <div
+                        class="bg-gray-200 px-4 py-2 font-semibold text-gray-700"
+                    >
+                        Datos Técnicos del Producto
+                    </div>
+                    <div class="flex-1 px-4 py-2">
+                        <div
+                            class="rounded-lg border border-gray-300 bg-white shadow-sm"
+                        >
+                            <div
+                                class="bg-gray-100 px-4 py-2 font-medium text-gray-600"
+                            >
+                                Datos de Avería
+                            </div>
+                            <div class="space-y-2 p-2">
+                                <!-- Diagnóstico -->
+                                <div>
+                                    <label
+                                        for="diagnostico"
+                                        class="block text-sm font-medium text-gray-700"
+                                        >Diagnóstico</label
+                                    >
+                                    <p-dropdown
+                                        id="diagnostico"
+                                        [(ngModel)]="model.iddiagnostico"
+                                        [options]="diagnosticos"
+                                        placeholder="Seleccione un diagnóstico"
+                                        filter="true"
+                                        [showClear]="true"
+                                        [style]="{
+                                            width: '100%',
+                                            'min-width': '250px',
+                                        }"
+                                        (onChange)="onDiagnosticoChange($event)"
+                                    >
+                                        <ng-template
+                                            let-item
+                                            pTemplate="selectedItem"
+                                        >
+                                            <span>{{ item.label }}</span>
+                                        </ng-template>
+                                    </p-dropdown>
+                                </div>
 
-        <div class="flex items-center justify-center rounded-lg p-6 space-x-8 bg-gray-700">
-          <div class="text-center text-white">
-            <p class="text-6xl font-bold">{{ contador.dias }}</p>
-            <p class="text-xl font-medium">Días</p>
-          </div>
-          <div class="text-center text-white">
-            <p class="text-6xl font-bold">{{ contador.horas }}</p>
-            <p class="text-xl font-medium">Horas</p>
-          </div>
-          <div class="text-center text-white">
-            <p class="text-6xl font-bold">{{ contador.minutos }}</p>
-            <p class="text-xl font-medium">Minutos</p>
-          </div>
-          <div class="text-center text-white">
-            <p class="text-6xl font-bold">{{ contador.segundos }}</p>
-            <p class="text-xl font-medium">Segundos</p>
-          </div>
+                                <!-- Reparación -->
+                                <div>
+                                    <label
+                                        for="reparacion"
+                                        class="block text-sm font-medium text-gray-700"
+                                        >Reparación</label
+                                    >
+                                    <p-dropdown
+                                        id="reparacion"
+                                        [(ngModel)]="model.idreparacion"
+                                        [options]="reparaciones"
+                                        placeholder="Seleccione una reparación"
+                                        filter="true"
+                                        [showClear]="true"
+                                        [style]="{
+                                            width: '100%',
+                                            'min-width': '250px',
+                                        }"
+                                        (onChange)="onReparacionChange($event)"
+                                    >
+                                        <ng-template
+                                            let-item
+                                            pTemplate="selectedItem"
+                                        >
+                                            <span>{{ item.label }}</span>
+                                        </ng-template>
+                                    </p-dropdown>
+                                </div>
+
+                                <!-- Repuesto -->
+                                <div>
+                                    <label
+                                        for="repuesto"
+                                        class="block text-sm font-medium text-gray-700"
+                                        >Repuesto</label
+                                    >
+                                    <p-dropdown
+                                        id="repuesto"
+                                        [options]="repuestos"
+                                        [(ngModel)]="model.idrepuesto"
+                                        placeholder="Seleccione un repuesto"
+                                        [style]="{
+                                            width: '100%',
+                                            'min-width': '250px',
+                                        }"
+                                    >
+                                        <ng-template
+                                            let-item
+                                            pTemplate="selectedItem"
+                                        >
+                                            <span>{{ item.label }}</span>
+                                        </ng-template>
+                                    </p-dropdown>
+                                </div>
+
+                                <!-- Botón agregar -->
+                                <p-button
+                                  
+                                    (click)="agregarDetalle()"
+                                    label="Agregar"
+                                    icon="pi pi-plus"
+                                   
+                                ></p-button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección Información -->
+            <div class="flex h-full flex-col">
+                <div
+                    class="flex h-full flex-col rounded-lg border border-gray-300 bg-white shadow-md"
+                >
+                    <div
+                        class="bg-gray-200 px-4 py-2 font-semibold text-gray-700"
+                    >
+                        Información
+                    </div>
+                    <div
+                        class="flex flex-1 flex-col justify-between space-y-4 px-4 py-2"
+                    >
+                        <!-- Número OST -->
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-700">
+                                Nº OST
+                            </h3>
+                            <h1 class="text-3xl font-bold text-gray-900">
+                                {{ numeroOSTFormateado }}
+                            </h1>
+                        </div>
+
+                        <div
+                            class="flex items-center justify-center space-x-8 rounded-lg bg-gray-700 p-6"
+                        >
+                            <div class="text-center text-white">
+                                <p class="text-6xl font-bold">
+                                    {{ contador.dias }}
+                                </p>
+                                <p class="text-xl font-medium">Días</p>
+                            </div>
+                            <div class="text-center text-white">
+                                <p class="text-6xl font-bold">
+                                    {{ contador.horas }}
+                                </p>
+                                <p class="text-xl font-medium">Horas</p>
+                            </div>
+                            <div class="text-center text-white">
+                                <p class="text-6xl font-bold">
+                                    {{ contador.minutos }}
+                                </p>
+                                <p class="text-xl font-medium">Minutos</p>
+                            </div>
+                            <div class="text-center text-white">
+                                <p class="text-6xl font-bold">
+                                    {{ contador.segundos }}
+                                </p>
+                                <p class="text-xl font-medium">Segundos</p>
+                            </div>
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="flex space-x-4">
+                            <p-button
+                                label="Ver Antecedentes"
+                                icon="pi pi-arrow-right"
+                                severity="secondary"
+                                  (click)="verAntecedentes()"
+                               
+                            ></p-button>
+                            <p-button
+                                label="Ver 243CKD4L8923"
+                                icon="pi pi-arrow-right"
+                                severity="contrast"
+                               
+                            ></p-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
+        <!-- Sección Detalles del Servicio -->
+        <div class="px-4 pb-4 pt-2">
+            <div class="rounded-lg border border-gray-300 bg-white shadow-md">
+                <div class="bg-gray-200 px-4 py-2 font-semibold text-gray-700">
+                    Detalles del Servicio
+                </div>
+                <div class="space-y-4 p-4">
+                    <div>
+                        <label
+                            for="descripcion"
+                            class="block text-sm font-medium text-gray-700"
+                            >Descripción de la reparación:</label>
+                  <textarea 
+                      rows="2"
+                      cols="120" 
+                      pInputTextarea 
+                      [(ngModel)]="model.descripcion">
+                  </textarea>
+                    </div>
+                    <div class="flex space-x-4 mb-4 mt-4">
+                        <p-button
+                            label="Pend. Repuesto"
+                            icon="pi pi-pause"
 
-          <!-- Botones -->
-          <div class="flex space-x-4">
-            <button pButton type="button" label="Ver Antecedentes" icon="pi pi-arrow-right"
-                    class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"></button>
-            <button pButton type="button" label="Ver 243CKD4L8923" icon="pi pi-arrow-right"
-                    class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"></button>
-          </div>
+                            (click)="confirmarPausaReparacion()"
+                        ></p-button>
+
+                        <p-button
+                            label="Remozado"
+                            icon="pi pi-check"
+                            severity="warning"
+                            (click)="confirmarRemozado()"
+                            
+                        ></p-button>
+
+                        <p-button
+                            label="No Reparable"
+                            icon="pi pi-times"
+                            severity="danger"
+                            (click)="confirmarIrreparable()"
+                            
+                        ></p-button>
+
+                        <p-button
+                            label="Finalizar"
+                            icon="pi pi-check"
+                            severity="success"
+                            
+                            
+                            (click)="finalizarReparacion()"
+                        ></p-button>
+                    </div>
+
+                    <div class=" mb-4 mt-4">
+                    <p-table
+                        [value]="detalles"
+                        responsiveLayout="scroll"
+                        class="mt-4"
+                    >
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Acciones</th>
+                                <th>Descripción</th>
+                                <th>Diagnóstico</th>
+                                <th>Reparación</th>
+                                <th>Repuestos</th>
+                                <th>Serie</th>
+                                <th>IMEI</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-detalle>
+                            <tr>
+                                <td>
+                                    <p-button
+                                        pButton
+                                        type="button"
+                                        icon="pi pi-trash"
+                                        class="p-button-rounded p-button-danger"
+                                        (click)="eliminarDetalle(detalle)"
+                                    ></p-button>
+                                </td>
+                                <td>{{ detalle.descripcion }}</td>
+                                <td>{{ detalle.diagnostico }}</td>
+                                <td>{{ detalle.reparacion }}</td>
+                                <td>{{ detalle.repuesto }}</td>
+                                <td>{{ detalle.serie }}</td>
+                                <td>{{ detalle.imei }}</td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <p-confirmDialog />
+        <p-toast></p-toast>
     </div>
-  </div>
-
-  <!-- Sección Detalles del Servicio -->
-  <div class="pt-2 px-4 pb-4">
-    <div class="border border-gray-300 rounded-lg shadow-md bg-white">
-      <div class="bg-gray-200 px-4 py-2 font-semibold text-gray-700">Detalles del Servicio</div>
-      <div class="p-4 space-y-4">
-        <div>
-          <label for="descripcion" class="block text-sm font-medium text-gray-700">Descripción de la reparación (Cliente):</label>
-          <textarea id="descripcion" rows="3" class="block w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"></textarea>
-        </div>
-        <div class="flex space-x-4">
- 
-        <button pButton type="button" label="Pend. Repuesto" icon="pi pi-pause"
-        class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
-        (click)="confirmarPausaReparacion()"></button>
-
- <button pButton type="button" label="Remozado" icon="pi pi-check"
-                  class="bg-yellow-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded"></button>
-                  
-          <button pButton type="button" label="No Reparable" icon="pi pi-times"
-                  class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded"></button>
-        
-                  <button pButton type="button" label="Finalizar" icon="pi pi-check"
-        class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded"
-        (click)="finalizarReparacion()"></button>
-
-
-
-
-        
-
-
-         
-        </div>
-        <p-table [value]="detalles" responsiveLayout="scroll" class="mt-4">
-          <ng-template pTemplate="header">
-            <tr>
-              <th>Acciones</th>
-              <th>Descripción</th>
-              <th>Diagnóstico</th>
-              <th>Reparación</th>
-              <th>Repuestos</th>
-              <th>Serie</th>
-              <th>IMEI</th>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-detalle>
-            <tr>
-              <td>
-                <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger"
-                        (click)="eliminarDetalle(detalle)"></button>
-              </td>
-              <td>{{ detalle.descripcion }}</td>
-              <td>{{ detalle.diagnostico }}</td>
-              <td>{{ detalle.reparacion }}</td>
-              <td>{{ detalle.repuesto }}</td>
-              <td>{{ detalle.serie }}</td>
-              <td>{{ detalle.imei }}</td>
-            </tr>
-          </ng-template>
-        </p-table>
-      </div>
-    </div>
-  </div>
-
-  <p-confirmDialog />
-  <p-toast></p-toast>
 </div>
+<p-dialog
+  header="Antecedentes del Equipo"
+  [(visible)]="mostrarDialogAntecedentes"
+  [modal]="true"
+  [style]="{ width: '700px' }"
+  [closable]="true"
+>
+  <ng-container *ngIf="antecedentes.length > 0; else noData">
+    <p-table
+      [value]="antecedentes"
+      responsiveLayout="scroll"
+      class="text-sm"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>N° OST</th>
+          <th>Fecha</th>
+          <th>Producto</th>
+          <th>Serie</th>
+          <th>Diagnóstico</th>
+          <th>Comentario</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-row>
+        <tr>
+          <td>{{ row.numeroordenservicio }}</td>
+          <td>{{ row.fechahoraregistro }}</td>
+          <td>{{ row.producto }}</td>
+          <td>{{ row.serie }}</td>
+          <td>{{ row.diagnostico }}</td>
+          <td>{{ row.comentario }}</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </ng-container>
 
-
-</div>
+  <ng-template #noData>
+    <p class="text-center text-gray-600 py-4">No se encontraron antecedentes.</p>
+  </ng-template>
+</p-dialog>

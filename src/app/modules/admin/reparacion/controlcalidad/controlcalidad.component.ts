@@ -16,6 +16,7 @@ import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { ReparacionService } from '../reparacion.service';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { AprobarQcDto } from '../reparacion.types';
 
 @Component({
   selector: 'app-controlcalidad',
@@ -204,10 +205,28 @@ export class ControlcalidadComponent implements OnInit {
   }
   
   guardarQC() {
-    console.log('Respuestas QC:', this.respuestas);
-    this.visible = false;
-    // Aquí puedes llamar a tu servicio para guardar la información
-  }
-  
+  // Verificar si todas las respuestas son "true"
+  const todasAprobadas = Object.values(this.respuestas).every(value => value === 'true');
+
+  const dto: AprobarQcDto = {
+    idOrdenServicio: this.ordenSelected.idordenserviciotecnico,
+    aprobado: todasAprobadas
+  };
+
+  this.reparacionService.aprobarQC(dto).subscribe({
+    next: (res) => {
+      if (res.res) {
+        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: res.mensaje });
+        this.visible = false;
+      } else {
+        this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: res.mensaje });
+      }
+    },
+    error: (err) => {
+      console.error(err);
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo procesar la solicitud.' });
+    }
+  });
+}
 
 }
