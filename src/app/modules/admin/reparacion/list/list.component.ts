@@ -114,6 +114,8 @@ export class ListComponent implements OnInit {
       { header: 'PRODUCTO', field: 'nuOrdeComp', width: '120px' },
       { header: 'SERIE', field: 'stOrde', width: '220px' },
       { header: 'ESTADO', field: 'deRubr', width: '120px' },
+       { header: 'TIPO REPARACIÓN', field: 'tiporeparacion', width: '120px' },
+      { header: 'FEC. REGISTRO', field: 'deRubr', width: '120px' },
       { header: 'FEC. ASIGNACIÓN', field: 'deRubr', width: '120px' },
       { header: 'CLIENTE', field: 'tiOrdeComp', width: '120px' },
       { header: 'TEC. ASIGNADO', field: 'deRubr', width: '120px' },
@@ -172,6 +174,9 @@ export class ListComponent implements OnInit {
       this.model.serie
     ).subscribe(data => {
       this.ordenes = data;
+      
+      console.log('Ordenes:', this.ordenes);
+
     });
   }
 
@@ -236,7 +241,7 @@ export class ListComponent implements OnInit {
     switch (estado) {
       case 'Pend. Asignación': return '#ffcccb';
       case 'Pend. Proceso QC': return '#fff59d';
-      case 'Pend. Despacho al Cliente': return '#c8e6c9';
+      case 'Cerrada': return '#c8e6c9';
       default: return 'transparent';
     }
   }

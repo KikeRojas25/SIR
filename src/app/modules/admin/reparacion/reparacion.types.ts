@@ -30,8 +30,14 @@ export interface FinalizarReparacionRequest {
   idOtTiempo: number;      // id del tiempo activo
   descripcion: string;
   informeTecnico: string;
+  idestado: number;
 }
 export interface AprobarQcDto {
   idOrdenServicio: number;
   aprobado: boolean;
+}
+export enum EstadoOT {
+  Reparado = 44,
+  Remozado = 43,
+  Irreparable = 68
 }

@@ -30,17 +30,23 @@ select.ng-invalid.ng-touched {
 }
 
 .p-datatable .p-datatable-thead > tr > th {
-    background-color: #f0f0f0;
-    color: #333;
-    font-size: 14px;
+    background-color: #0707b6;
+    color: #000000;
+    font-size: 12px;
     text-align: center;
+    
+    
 }
 
 .p-datatable-tbody > tr > td {
-    font-size: 14px;
-    padding: 8px;
+    font-size: 12px;
+    padding: 4px;
 }
-
+.p-button.p-button-sm {
+    font-size: 12px;
+    padding: 6px 12px;
+    font-weight: 100 !important;
+}
 // .p-timeline .p-timeline-event-marker{
 //     display: inline-flex !important;
 //     align-items: center !important;

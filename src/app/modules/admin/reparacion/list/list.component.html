@@ -112,7 +112,7 @@
         <td class="ui-resizable-column">
           <p-button 
           size="small" 
-          [disabled]="rowData.ostestado === 'Pend. Despacho al Cliente'" 
+          [disabled]="rowData.ostestado === 'Cerrada'" 
           [label]="getButtonLabel(rowData.ostestado)" 
           icon="pi pi-user" 
           (click)="asignar(rowData)">
@@ -121,9 +121,8 @@
 
       <p-button 
       size="small" 
-      [disabled]="rowData.ostestado === 'Pend. Despacho al Cliente'" 
-      label="Filtrado" 
-      iconClass="fa fa-search" 
+      [disabled]="rowData.ostestado === 'Cerrada'" 
+      icon="pi pi-filter"
       (click)="verFiltrado(rowData)">
   </p-button>
       
@@ -133,15 +132,24 @@
           <td class="ui-resizable-column"> {{ rowData.producto }} </td>
           <td class="ui-resizable-column"> {{ rowData.serie }} </td>
     
-          <td class="ui-resizable-column"  [ngStyle]="{'background-color': getEstadoColor(rowData.ostestado)}"> 
+          <td class="ui-resizable-column"  [ngStyle]="{'text-align': 'center', 'vertical-align': 'middle' ,'background-color': getEstadoColor(rowData.ostestado)}"> 
             {{ rowData.ostestado }} 
           </td>
+           <td class="ui-resizable-column" [ngStyle]="{ 'text-align': 'center', 'vertical-align': 'middle' }"  > 
+            {{ rowData.tiporeparacion }} 
+          </td>
+
+            <td class="ui-resizable-column" [ngStyle]="{ 'text-align': 'center', 'vertical-align': 'middle' }"  >
+            {{ rowData.fechaRegistro ? (rowData.fechaRegistro | date: 'dd/MM/yyyy') : 'Fecha no disponible' }}
+          </td>
           
-          <td class="ui-resizable-column">
+          <td class="ui-resizable-column" [ngStyle]="{ 'text-align': 'center', 'vertical-align': 'middle' }"  >
             {{ rowData.fechaAsignacion ? (rowData.fechaAsignacion | date: 'dd/MM/yyyy') : 'Fecha no disponible' }}
           </td>
-          <td class="ui-resizable-column"> {{ rowData.cliente }} </td>
-          <td class="ui-resizable-column"> {{ rowData.tecnicoAsignado }} </td>
+                    
+        
+          <td class="ui-resizable-column" [ngStyle]="{ 'text-align': 'center', 'vertical-align': 'middle' }"  > {{ rowData.cliente }} </td>
+          <td class="ui-resizable-column" [ngStyle]="{ 'text-align': 'center', 'vertical-align': 'middle' }"  > {{ rowData.tecnicoAsignado }} </td>
 
       </tr>
     </ng-template>

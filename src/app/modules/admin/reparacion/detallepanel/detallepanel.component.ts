@@ -16,7 +16,8 @@ import { PanelModule } from 'primeng/panel';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ReparacionService } from '../reparacion.service';
 import { ActivatedRoute } from '@angular/router';
-import { FinalizarReparacionRequest } from '../reparacion.types';
+import { EstadoOT, FinalizarReparacionRequest } from '../reparacion.types';
+import { concatMap, finalize, tap } from 'rxjs';
 
 
 @Component({
@@ -55,14 +56,18 @@ export class DetallepanelComponent implements OnInit {
   antecedentes: any[] = [];
   mostrarDialogAntecedentes = false;
 
+    cargando = false;
+
+    controlesBloqueados = false;
+
 
   contador: any = { dias: 0, horas: 0, minutos: 0, segundos: 0 };
-intervalRef: any;
-
+  intervalRef: any;
+  estaFinalizada = false;        // ← flag local para bloquear acciones
 
   id: any;
   detalles: any = [];
-numeroOSTFormateado: string = '';
+  numeroOSTFormateado: string = '';
 
   constructor(private reparacionService: ReparacionService,
     private confirmationService: ConfirmationService,
@@ -75,10 +80,12 @@ numeroOSTFormateado: string = '';
 
     this.id  = this.activatedRoute.snapshot.params['uid'];
     this.cargarCombos();
-     this.cargarContador(this.id); 
-      this.numeroOSTFormateado = this.id.toString().padStart(10, '0');
+    this.cargarContador(this.id); 
+    this.numeroOSTFormateado = this.id.toString().padStart(10, '0');
 
-      this.cargarOrdenTrabajoDetalle();
+    this.cargarOrdenTrabajoDetalle();
+
+    // this.reparacionService.obtenerEstadoOT(this.id).subscribe(e => this.estaFinalizada = e.finalizada);
   }
   
   
@@ -262,7 +269,8 @@ finalizarReparacion(): void {
         id: this.id, // ID de la orden de trabajo
         idOtTiempo: 0, // Debes tenerlo en el componente
         descripcion: this.model.descripcion || '',
-        informeTecnico: this.model.informetecnico || ''
+        informeTecnico: this.model.informetecnico || '',
+        idestado: EstadoOT.Reparado // Asignar el estado de reparado
       };
 
       this.reparacionService.finalizarReparacion(request).subscribe({
@@ -361,43 +369,132 @@ confirmarRemozado() {
     acceptLabel: 'Sí, marcar',
     rejectLabel: 'Cancelar',
     accept: () => {
-      this.marcarRemozado(this.id);
+      //this.marcarRemozado(this.id);
+     
+      const request: FinalizarReparacionRequest = {
+          id: this.id, idOtTiempo: 0,
+          descripcion: this.model.descripcion || 'Finalizado por remozado',
+          informeTecnico: this.model.informetecnico || 'Cierre automático al marcar remozado',
+          idestado: EstadoOT.Remozado // Asignar el estado de remozado
+      };
+
+
+      this.reparacionService.finalizarReparacion(request).subscribe({
+          next: () => {
+            this.estaFinalizada = true;   
+            clearInterval(this.intervalRef);
+            this.contador = { dias:0, horas:0, minutos:0, segundos:0 };
+            this.cargarOrdenTrabajoDetalle();
+          }
+        });
     }
   });
 }
+ confirmarIrreparable() {
+    this.confirmationService.confirm({
+      message: '¿Estás seguro de que deseas marcar este producto como irreparable?',
+      header: 'Confirmar acción',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí, marcar',
+      rejectLabel: 'Cancelar',
+      accept: () => this.flujoIrreparable(),
+    });
+  }
+private flujoIrreparable() {
+    if (this.cargando) return; // evita doble ejecución
+    this.cargando = true;
 
-confirmarIrreparable() {
-
-  this.confirmationService.confirm({
-    message: '¿Estás seguro de que deseas marcar este producto como irreparable?',
-    header: 'Confirmar acción',
-    icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'Sí, marcar',
-    rejectLabel: 'Cancelar',
-    accept: () => {
-      this.marcarIrreparable(this.id);
-    }
-  });
-}
-marcarIrreparable(idOrdenServicio: number) {
-  this.reparacionService.asignarIrreparable(idOrdenServicio).subscribe({
-    next: (res) => {
-      if (res.res) {
-        
-        this.messageService.add({ severity: 'success', summary: 'Éxito', detail: res.mensaje });  
+    this.reparacionService.asignarIrreparable(this.id).pipe(
+      tap((res) => {
+        if (!res?.res) {
+          // fuerza error para que lo capture el subscribe.error
+          throw new Error(res?.mensaje || 'No se pudo marcar como irreparable.');
+        }
+      }),
+      concatMap(() =>
+        this.reparacionService.finalizarReparacion(
+          this.buildFinalizarRequest(EstadoOT.Irreparable)
+        )
+      ),
+      finalize(() => (this.cargando = false))
+    )
+    .subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Éxito',
+          detail: 'Se marcó irreparable y la OT fue finalizada.',
+        });
+        this.bloquearUIyResetearContador();
         this.cargarOrdenTrabajoDetalle();
+        // si tienes un método para refrescar estado, úsalo:
+        // this.cargarEstadoOT();
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: err?.message || 'No se pudo completar la operación.',
+        });
+      },
+    });
+  }
 
 
-      } else {
-        this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: res.mensaje });
-      }
-    },
-    error: (err) => {
-      console.error(err);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo procesar la operación.' });
-    }
-  });
-}
+
+// confirmarIrreparable() {
+
+//   this.confirmationService.confirm({
+//     message: '¿Estás seguro de que deseas marcar este producto como irreparable?',
+//     header: 'Confirmar acción',
+//     icon: 'pi pi-exclamation-triangle',
+//     acceptLabel: 'Sí, marcar',
+//     rejectLabel: 'Cancelar',
+//     accept: () => {
+//       this.marcarIrreparable(this.id);
+
+//       const request: FinalizarReparacionRequest = {
+//           id: this.id, idOtTiempo: 0,
+//           descripcion: this.model.descripcion || 'Finalizado por remozado',
+//           informeTecnico: this.model.informetecnico || 'Cierre automático al marcar remozado',
+//           idestado: EstadoOT.Irreparable // Asignar el estado de remozado
+//       };
+
+
+//       this.reparacionService.finalizarReparacion(request).subscribe({
+//           next: () => {
+//             this.estaFinalizada = true;   
+//             clearInterval(this.intervalRef);
+//             this.contador = { dias:0, horas:0, minutos:0, segundos:0 };
+//             //this.cargarOrdenTrabajoDetalle();
+//           }
+//         });
+    
+
+      
+//     }
+//   });
+// }
+// marcarIrreparable(idOrdenServicio: number) {
+//   this.reparacionService.asignarIrreparable(idOrdenServicio).subscribe({
+//     next: (res) => {
+//       if (res.res) {
+        
+//         this.messageService.add({ severity: 'success', summary: 'Éxito', detail: res.mensaje });  
+//         this.cargarOrdenTrabajoDetalle();
+        
+
+
+//       } else {
+//         this.messageService.add({ severity: 'warn', summary: 'Advertencia', detail: res.mensaje });
+//       }
+//     },
+//     error: (err) => {
+//       console.error(err);
+//       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'No se pudo procesar la operación.' });
+//     }
+//   });
+//}
 marcarRemozado(id: number) {
   this.reparacionService.asignarRemozado(id).subscribe({
     next: (res) => {
@@ -444,6 +541,21 @@ verAntecedentes() {
     }
   });
 }
+  private buildFinalizarRequest(estado: EstadoOT): FinalizarReparacionRequest {
+    return {
+      id: this.id,
+      idOtTiempo: 0, // si luego lo tienes real, cámbialo aquí
+      descripcion: this.model.descripcion || 'Cierre automático por irreparable',
+      informeTecnico: this.model.informetecnico || 'Se marca irreparable y se cierra la OT',
+      idestado: estado,
+    };
+  }
+  
+  private bloquearUIyResetearContador(): void {
+    this.controlesBloqueados = true;
+    clearInterval(this.intervalRef);
+    this.contador = { dias: 0, horas: 0, minutos: 0, segundos: 0 };
+  }
 
 }
 interface DiagnosticoItem extends SelectItem<number> {

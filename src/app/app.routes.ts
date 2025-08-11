@@ -174,7 +174,8 @@ export const appRoutes: Route[] = [
                   }
                  
                 ]
-              }
+              },
+
         ]
     }
 ];
