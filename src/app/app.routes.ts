@@ -114,18 +114,6 @@ export const appRoutes: Route[] = [
                 ]
               },
               {
-                path: 'inventario',
-                loadComponent: () => import('./modules/admin/inventario/inventario.component')
-                                      .then(m => m.InventarioComponent),
-                children: [
-                  {
-                    path: 'ordeningreso',
-                    loadComponent: () => import('./modules/admin/inventario/newbatch/newbatch.component')
-                                          .then(m => m.NewbatchComponent)
-                  }
-                ]
-              },
-              {
                 path: 'reparacion',
                 loadComponent: () => import('./modules/admin/reparacion/reparacion.component')
                                       .then(m => m.ReparacionComponent),
@@ -152,6 +140,23 @@ export const appRoutes: Route[] = [
                   }
                 ]
               },
+               {
+                path: 'inventario',
+                loadComponent: () => import('./modules/admin/inventario/inventario.component')
+                                      .then(m => m.InventarioComponent),
+                children: [
+                  {
+                    path: 'operacionesinventario',
+                    loadComponent: ()   => import('./modules/admin/inventario/operacionesinventario/operacionesinventario.component')
+                                          .then(m => m.OperacionesinventarioComponent)
+                  },
+                  {
+                    path: 'ordendeingreso',
+                    loadComponent: () => import('./modules/admin/inventario/ordeningreso/ordeningreso.component')
+                                          .then(m => m.OrdeningresoComponent)
+                  },
+                ]
+              },
               {
                 path: 'reportes',
                 loadComponent: () => import('./modules/admin/reportes/reportes.component')
@@ -175,7 +180,58 @@ export const appRoutes: Route[] = [
                  
                 ]
               },
-
+{
+                path: 'maestro',
+                loadComponent: () => import('./modules/admin/maestro/maestro.component')
+                                      .then(m => m.MaestroComponent),
+                children: [
+                  {
+                    path: 'cliente',
+                    loadComponent: () => import('./modules/admin/maestro/cliente/cliente.component')
+                                          .then(m => m.ClienteComponent)
+                  },
+                  {
+                    path: 'partner',
+                    loadComponent: () => import('./modules/admin/maestro/partner/parnert.component')
+                                          .then(m => m.ParnertComponent)
+                  },
+                  {
+                    path: 'zona',
+                    loadComponent: () => import('./modules/admin/maestro/zona/zona.component')
+                                          .then(m => m.ZonaComponent)
+                  },
+                  {
+                    path: 'sucursal',
+                    loadComponent: () => import('./modules/admin/maestro/sucursal/sucursal.component')
+                                          .then(m => m.SucursalComponent)
+                  },
+                  {
+                    path: 'diagnostico',
+                    loadComponent: () => import('./modules/admin/maestro/diagnostico/diagnostico.component')
+                                          .then(m => m.DiagnosticoComponent)
+                  },
+                  {
+                    path: 'reparacion',
+                    loadComponent: () => import('./modules/admin/maestro/reparacion/reparacion.component')
+                                          .then(m => m.ReparacionComponent)
+                  },
+                  {
+                    path: 'producto',
+                    loadComponent: () => import('./modules/admin/maestro/producto/producto.component')
+                                          .then(m => m.ProductoComponent)
+                  },
+                  {
+                    path: 'valortabla',
+                    loadComponent: () => import('./modules/admin/maestro/valortabla/valortabla.component')
+                                          .then(m => m.ValortablaComponent)
+                  },
+                  {
+                    path: 'almacen',
+                    loadComponent: () => import('./modules/admin/maestro/almacen/almacen.component')
+                                          .then(m => m.AlmacenComponent)
+                  },
+                ]
+              },
         ]
     }
 ];
