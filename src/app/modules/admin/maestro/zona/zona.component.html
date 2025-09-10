@@ -1,3 +1,66 @@
-<p>
-  zona works!
-</p>
+
+<div class="flex flex-col flex-auto min-w-0">
+
+  <div class="flex flex-col sm:flex-row flex-0 sm:items-center p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <div class="flex flex-wrap items-center font-medium">
+        <div>
+          <a class="whitespace-nowrap text-primary-500">SIR</a>
+        </div>
+        <div class="flex items-center ml-1 whitespace-nowrap">
+          <mat-icon
+            class="fuse-horizontal-navigation-item-icon"
+            [svgIcon]="'heroicons_solid:chevron-right'">
+          </mat-icon>
+          <a class="ml-1 text-primary-500">Maestro</a>
+        </div>
+      </div>
+      <div class="mt-2">
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+          Zona
+        </h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tarjeta de búsqueda -->
+  <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6 sm:px-10 border w-full">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+      
+      <!-- Criterio de Búsqueda -->
+      <div class="sm:col-span-2">
+        <label class="font-bold text-gray-700 dark:text-gray-300 mb-2 block">
+          Criterio de Búsqueda:
+        </label>
+        
+        <div class="p-input-icon-right w-full">
+          <input 
+            pInputText
+            [(ngModel)]="model.criteriodebusqueda"
+            type="text"
+            placeholder="Nombre Zona"
+            class="w-full" />
+            
+          <!-- Ícono X integrado -->
+          <i 
+            *ngIf="model.criteriodebusqueda"
+            class="pi pi-times cursor-pointer text-gray-400 hover:text-gray-600"
+            (click)="model.criteriodebusqueda = ''">
+          </i>
+        </div>
+      </div>
+
+      <!-- Botón Buscar -->
+      <div class="sm:col-span-1 flex items-end">
+        <p-button
+          severity="success"
+          icon="pi pi-search"
+          (click)="buscar()"
+          label="Buscar"
+          class="w-full">
+        </p-button>
+      </div>
+      
+    </div>
+  </div>
+</div>

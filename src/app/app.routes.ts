@@ -191,9 +191,10 @@ export const appRoutes: Route[] = [
                                           .then(m => m.ClienteComponent)
                   },
                   {
-                    path: 'partner',
-                    loadComponent: () => import('./modules/admin/maestro/partner/parnert.component')
-                                          .then(m => m.ParnertComponent)
+                        path: 'partner',
+                  loadComponent: () =>
+                                          import('./modules/admin/maestro/partner/partner.component')
+                  .then(m => m.PartnerComponent)
                   },
                   {
                     path: 'zona',
@@ -232,6 +233,17 @@ export const appRoutes: Route[] = [
                   },
                 ]
               },
+              {
+                path: 'seguridad',
+                loadComponent: () => import('./modules/admin/seguridad/seguridad.component')
+                                      .then(m => m.SeguridadComponent),
+                children: [
+                  {
+                    path: 'usuarios',
+                    loadComponent: () => import('./modules/admin/seguridad/usuarios/usuarios.component')
+                                          .then(m => m.UsuariosComponent)
+                  }
+                ]}
         ]
     }
 ];

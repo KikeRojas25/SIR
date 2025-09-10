@@ -26,12 +26,13 @@ export interface ListarOrdenTrabajoDetalleResult {
   // Agrega aquí los demás campos si existen en el DTO
 }
 export interface FinalizarReparacionRequest {
-  id: number;              // id de orden de trabajo
-  idOtTiempo: number;      // id del tiempo activo
-  descripcion: string;
-  informeTecnico: string;
-  idestado: number;
+  Id: number;
+  IdOtTiempo: number;
+  Descripcion: string;
+  InformeTecnico: string;
+  IdEstado: number;
 }
+
 export interface AprobarQcDto {
   idOrdenServicio: number;
   aprobado: boolean;
@@ -39,5 +40,5 @@ export interface AprobarQcDto {
 export enum EstadoOT {
   Reparado = 44,
   Remozado = 43,
-  Irreparable = 68
+  Irreparable = 48
 }

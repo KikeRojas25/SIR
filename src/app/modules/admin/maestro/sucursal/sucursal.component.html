@@ -1,3 +1,85 @@
-<p>
-  sucursal works!
-</p>
+
+<div class="flex flex-col flex-auto min-w-0">
+
+
+  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <div  class="flex flex-wrap items-center font-medium">
+        <div>
+          <a  class="whitespace-nowrap text-primary-500">SIR</a>
+        </div>
+        <div class="flex items-center ml-1 whitespace-nowrap">
+              <mat-icon
+              class="fuse-horizontal-navigation-item-icon"
+              [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+              <a  class="ml-1 text-primary-500">Maestro</a>
+          </div>
+      </div>
+          <div class="mt-2"><h2  class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">Sucursal</h2>
+      </div>
+  </div>
+  </div>
+<div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6 sm:px-10 border">
+  <div class="grid grid-cols-1 sm:grid-cols-4 gap-6">
+
+    <!-- Código -->
+    <div>
+      <label class="font-bold text-gray-700 dark:text-gray-300 mb-2 block">Código:</label>
+      <div class="p-input-icon-right w-full">
+        <input 
+          pInputText
+          [(ngModel)]="model.codigo"
+          type="text"
+          placeholder="Código"
+          class="w-full" />
+        <i 
+          *ngIf="model.codigo"
+          class="pi pi-times cursor-pointer text-gray-400 hover:text-gray-600"
+          (click)="model.codigo=''">
+        </i>
+      </div>
+    </div>
+
+    <!-- Nombre -->
+    <div>
+      <label class="font-bold text-gray-700 dark:text-gray-300 mb-2 block">Nombre:</label>
+      <div class="p-input-icon-right w-full">
+        <input 
+          pInputText
+          [(ngModel)]="model.nombre"
+          type="text"
+          placeholder="Nombre"
+          class="w-full" />
+        <i 
+          *ngIf="model.nombre"
+          class="pi pi-times cursor-pointer text-gray-400 hover:text-gray-600"
+          (click)="model.nombre=''">
+        </i>
+      </div>
+    </div>
+
+    <!-- Partner (Dropdown) -->
+    <div>
+      <label class="font-bold text-gray-700 dark:text-gray-300 mb-2 block">Partner:</label>
+      <p-dropdown 
+        [options]="partners" 
+        [(ngModel)]="model.partner" 
+        placeholder="--Todos--" 
+        optionLabel="name"
+        class="w-full">
+      </p-dropdown>
+    </div>
+
+    <!-- Botón Buscar -->
+    <div class="flex items-end">
+      <p-button
+        severity="success"  
+        icon="pi pi-search"
+        (click)="buscar()"
+        label="Buscar"
+        class="w-full">
+      </p-button>
+    </div>
+
+  </div>
+</div>

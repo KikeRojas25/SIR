@@ -1,3 +1,239 @@
-<p>
-  producto works!
-</p>
+<div class="flex flex-col flex-auto min-w-0">
+  <!-- 📌 TOAST Y CONFIRM -->
+  <p-toast></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- 📌 ENCABEZADO -->
+  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <div class="flex flex-wrap items-center font-medium">
+        <a class="whitespace-nowrap text-primary-500">SIR</a>
+        <div class="flex items-center ml-1 whitespace-nowrap">
+          <mat-icon class="fuse-horizontal-navigation-item-icon" [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+          <a class="ml-1 text-primary-500">Maestro</a>
+        </div>
+      </div>
+      <div class="mt-2">
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+          Producto
+        </h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📌 CONTENEDOR PRINCIPAL -->
+  <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-6 sm:px-10 border">
+    
+    <!-- 📌 FILTROS -->
+    <div class="mb-6">
+      <h2 class="text-xl font-bold mb-4">Filtro de búsqueda</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-6 gap-4 items-center">
+
+        <!-- Código -->
+        <div class="relative">
+          <input pInputText placeholder="Código" [(ngModel)]="filtro.codigo" class="w-full pr-8" />
+          <i *ngIf="filtro.codigo"
+             class="pi pi-times absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
+             (click)="limpiarCampo('codigo')"></i>
+        </div>
+
+        <!-- Descripción -->
+        <div class="relative">
+          <input pInputText placeholder="Descripción" [(ngModel)]="filtro.descripcion" class="w-full pr-8" />
+          <i *ngIf="filtro.descripcion"
+             class="pi pi-times absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500"
+             (click)="limpiarCampo('descripcion')"></i>
+        </div>
+
+        <!-- Tipo -->
+        <p-dropdown [options]="tipos"
+                    [(ngModel)]="filtro.idTipoProducto"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="--Tipo--">
+        </p-dropdown>
+
+        <!-- Fabricante -->
+        <p-dropdown [options]="fabricantes"
+                    [(ngModel)]="filtro.idFabricante"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="--Fabricante--">
+        </p-dropdown>
+
+        <!-- Modelo -->
+        <p-dropdown [options]="modelos"
+                    [(ngModel)]="filtro.idModelo"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="--Modelo--">
+        </p-dropdown>
+
+        <!-- Botones Buscar / Nuevo -->
+        <div class="flex gap-2">
+          <button pButton type="button" label="Buscar" class="p-button-primary w-full" (click)="buscar()"></button>
+          <button pButton type="button" label="Nuevo" icon="pi pi-plus" class="p-button-success w-full"
+                  (click)="abrirDialogoNuevo()"></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 📌 TABLA DE PRODUCTOS -->
+    <h2 class="text-xl font-bold mb-4">Listado de Productos</h2>
+    <p-table [value]="productos" [paginator]="true" [rows]="10" [responsiveLayout]="'scroll'">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Código</th>
+          <th>Producto</th>
+          <th>Repuesto</th>
+          <th>Tipo</th>
+          <th>Fabricante</th>
+          <th>Modelo</th>
+          <th>Peso</th>
+          <th>Volumen</th>
+          <th>Precio</th>
+          <th>Acciones</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-prod>
+        <tr>
+          <td>{{ prod.codigoProducto }}</td>
+          <td>{{ prod.descripcionCorta }}</td>
+          <td>{{ prod.repuesto ? 'Sí' : 'No' }}</td>
+          <td>{{ prod.tipoProducto }}</td>
+          <td>{{ prod.fabricante }}</td>
+          <td>{{ prod.modelo }}</td>
+          <td>{{ prod.peso }}</td>
+          <td>{{ prod.volumen }}</td>
+          <td>{{ prod.precioUnitario }}</td>
+          <td class="flex space-x-2">
+            <button pButton icon="pi pi-link" class="p-button-rounded p-button-help"
+                    (click)="relacionar(prod)"></button>
+            <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info"
+                    (click)="editar(prod)"></button>
+            <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger"
+                    (click)="eliminar(prod.idProducto)"></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <p-dialog header="Registrar Producto"
+          [(visible)]="dialogNuevo"
+          [modal]="true"
+          [style]="{width: '850px'}"
+          [closable]="true">
+
+  <!-- 📌 FORMULARIO ORDENADO -->
+  <div class="grid grid-cols-2 gap-6">
+
+    <!-- Columna izquierda -->
+    <div class="flex flex-col gap-4">
+      <div>
+        <label class="font-medium">Código</label>
+        <input pInputText [(ngModel)]="nuevoProducto.CodigoProducto" class="w-full" />
+      </div>
+
+      <div>
+        <label class="font-medium">Tipo Mercadería</label>
+        <p-dropdown [options]="tiposMercaderia"
+                    [(ngModel)]="nuevoProducto.IdTipoMercaderia"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="--Seleccionar--"
+                    class="w-full">
+        </p-dropdown>
+      </div>
+
+      <div>
+        <label class="font-medium">Descripción Larga</label>
+        <input pInputText [(ngModel)]="nuevoProducto.DescripcionLarga" class="w-full" />
+      </div>
+
+      <div>
+        <label class="font-medium">Modelo</label>
+        <p-dropdown [options]="modelos"
+                    [(ngModel)]="nuevoProducto.IdModelo"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="--Modelo--"
+                    class="w-full">
+        </p-dropdown>
+      </div>
+
+      <div>
+        <label class="font-medium">Precio</label>
+        <input pInputText type="number" [(ngModel)]="nuevoProducto.PrecioUnitario" class="w-full" />
+      </div>
+    </div>
+
+    <!-- Columna derecha -->
+    <div class="flex flex-col gap-4">
+      <div>
+        <label class="font-medium">Tipo Producto</label>
+        <p-dropdown [options]="tipos"
+                    [(ngModel)]="nuevoProducto.IdTipoProducto"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="--Tipo Producto--"
+                    class="w-full">
+        </p-dropdown>
+      </div>
+
+      <div>
+        <label class="font-medium">Descripción Corta</label>
+        <input pInputText [(ngModel)]="nuevoProducto.DescripcionCorta" class="w-full" />
+      </div>
+
+      <div>
+        <label class="font-medium">Fabricante</label>
+        <p-dropdown [options]="fabricantes"
+                    [(ngModel)]="nuevoProducto.IdFabricante"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="--Fabricante--"
+                    class="w-full">
+        </p-dropdown>
+      </div>
+
+      <div>
+        <label class="font-medium">Familia</label>
+        <p-dropdown [options]="familias"
+                    [(ngModel)]="nuevoProducto.IdFamilia"
+                    optionLabel="label"
+                    optionValue="value"
+                    placeholder="--Familia--"
+                    class="w-full">
+        </p-dropdown>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="font-medium">Peso</label>
+          <input pInputText type="number" [(ngModel)]="nuevoProducto.Peso" class="w-full" />
+        </div>
+        <div>
+          <label class="font-medium">Volumen</label>
+          <input pInputText type="number" [(ngModel)]="nuevoProducto.Volumen" class="w-full" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📌 BOTONES -->
+  <ng-template pTemplate="footer">
+    <button pButton 
+            label="Cancelar" 
+            icon="pi pi-times" 
+            class="p-button-text" 
+            (click)="dialogNuevo=false">
+    </button>
+
+    <button pButton
+            [label]="modoEdicion ? 'Actualizar' : 'Guardar'"
+            class="p-button-primary"
+            (click)="confirmarGuardar()">
+    </button>
+  </ng-template>
+</p-dialog>

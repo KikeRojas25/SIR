@@ -139,7 +139,7 @@ export class ListComponent implements OnInit {
       this.estados.unshift({ value: null, label: 'Selecciona un estado' });
     });
 
-    this.reparacionService.getTecnicos().subscribe({
+    this.reparacionService.getTecnicos(this.userId).subscribe({
       next: (data) => {
         this.tecnicos = data.map(t => ({
           label: t.nombreCompleto,

@@ -160,7 +160,7 @@ export class ReporteporoperadorComponent implements OnInit {
  
    }
    selectAlmacen(sucursal: any) {
-    console.log(sucursal.value);
+    console.log('sucursales',sucursal.value);
     this.obtenerAlmacenes(sucursal.value);
    }
 
@@ -170,12 +170,14 @@ export class ReporteporoperadorComponent implements OnInit {
 
       console.log('almacen', data);
 
-      this.almacenes =  data.map((x: any)=> ({ value: x.idAlmacen, label: x.nombrealmacen    }) );
+      this.almacenes =  data.map((x: any)=> ({ value: x.idAlmacen, label: x.nombreAlmacen    }) );
     });
   }
   obtenerSucursales() {
     this.cicService.getSucursal().subscribe(data => {
-      this.sucursales = data.map((x: any)=> ({ value: x.idsucursal, label: x.nombre    }) )
+console.log(data);
+
+      this.sucursales = data.map((x: any)=> ({ value: x.idSucursal, label: x.nombre    }) )
     });
   }
   

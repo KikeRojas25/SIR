@@ -1,3 +1,80 @@
-<p>
-  almacen works!
-</p>
+
+<div class="flex flex-col flex-auto min-w-0">
+
+
+  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <div  class="flex flex-wrap items-center font-medium">
+        <div>
+          <a  class="whitespace-nowrap text-primary-500">SIR</a>
+        </div>
+        <div class="flex items-center ml-1 whitespace-nowrap">
+              <mat-icon
+              class="fuse-horizontal-navigation-item-icon"
+              [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+              <a  class="ml-1 text-primary-500">Maestro</a>
+          </div>
+      </div>
+          <div class="mt-2"><h2  class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">Almacén</h2>
+      </div>
+  </div>
+  </div>
+<div class="p-4 space-y-6">
+
+  <!-- Filtro de búsqueda -->
+  <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 border">
+    <h3 class="text-lg font-semibold mb-4">Filtro de búsqueda</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 items-center">
+      
+      <div class="sm:col-span-2">
+        <label class="block text-sm font-medium mb-2">Código almacén:</label>
+        <input pInputText [(ngModel)]="codigoAlmacen" placeholder="Código almacén" class="w-full" />
+      </div>
+
+      <div class="sm:col-span-1">
+        <label class="block text-sm font-medium mb-2">Sucursal:</label>
+        <p-dropdown 
+          [options]="sucursales" 
+          [(ngModel)]="sucursalSeleccionada" 
+          placeholder="[-]">
+        </p-dropdown>
+      </div>
+
+      <div class="sm:col-span-1 flex items-end">
+        <button pButton label="Buscar" icon="pi pi-search" class="p-button-primary w-full" (click)="buscar()"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Listado de almacen -->
+  <div class="bg-white dark:bg-gray-800 shadow-sm rounded-lg p-4 border">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-lg font-semibold">Listado de almacen</h3>
+      <button pButton label="Nuevo" icon="pi pi-plus" class="p-button-success" (click)="nuevo()"></button>
+    </div>
+
+    <p-table [value]="almacen" class="p-datatable-sm">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Cód. Almacén</th>
+          <th>Almacén</th>
+          <th>Sucursal</th>
+          <th>Tipo</th>
+          <th>Acciones</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-almacen>
+        <tr>
+          <td>{{ almacen.codigo }}</td>
+          <td>{{ almacen.nombre }}</td>
+          <td>{{ almacen.sucursal }}</td>
+          <td>{{ almacen.tipo }}</td>
+          <td>
+            <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info p-button-sm mr-2" (click)="editar(almacen)"></button>
+            <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-sm" (click)="eliminar(almacen)"></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

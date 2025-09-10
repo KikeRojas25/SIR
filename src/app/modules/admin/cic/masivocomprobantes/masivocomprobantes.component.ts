@@ -134,7 +134,7 @@ export class MasivocomprobantesComponent implements OnInit {
 
 
       this.form.patchValue({
-      numeroGuia: 'GR-PRUEBA-001',
+      numeroGuia: '',
       idorigen: 1,
       idproducto: 101,
       idfabricante: 2,
@@ -174,28 +174,42 @@ export class MasivocomprobantesComponent implements OnInit {
       this.productos = data.map((x: any)=> ({ value: x.idProducto, label: x.descripcionLarga    }) )
     });
   }
+// Sucursal seleccionada -> dispara carga de almacenes
+selectAlmacen(idSucursal: number) {
+  console.log('✅ IdSucursal enviado al backend:', idSucursal);
+  this.obtenerAlmacenes(idSucursal);
 
-  obtenerSucursales() {
-    this.cicService.getSucursal().subscribe(data => {
-      this.sucursales = data.map((x: any)=> ({ value: x.idsucursal, label: x.nombre    }) )
-    });
-  }
+  // Resetear almacén cuando cambia sucursal
+  this.form.patchValue({ idalmacen: null });
+}
 
-  selectAlmacen(sucursal: any) {
-    console.log(sucursal.value);
-    this.obtenerAlmacenes(sucursal.value);
-  }
+// Obtener sucursales
+obtenerSucursales() {
+  this.cicService.getSucursal().subscribe(data => {
+    console.log('👉 Respuesta cruda de sucursales:', data);
 
+    this.sucursales = data.map((x: any) => ({
+      value: x.idSucursal ?? x.IdSucursal ?? x.idsucursal,
+      label: x.nombre ?? x.Nombre
+    }));
 
+    console.log('📦 Sucursales cargadas en dropdown:', this.sucursales);
+  });
+}
 
-  obtenerAlmacenes(idSucursal: number) {
-    this.cicService.getAlmacenes(idSucursal).subscribe(data => {
+// Obtener almacenes por sucursal
+obtenerAlmacenes(idSucursal: number) {
+  this.cicService.getAlmacenes(idSucursal).subscribe(data => {
+    console.log('👉 Respuesta cruda de almacenes:', data);
 
-      console.log('almacen', data);
+    this.almacenes = data.map((x: any) => ({
+      value: x.idAlmacen ?? x.IdAlmacen ?? x.idalmacen,
+      label: x.nombreAlmacen ?? x.NombreAlmacen ?? x.nombrealmacen
+    }));
 
-      this.almacenes =  data.map((x: any)=> ({ value: x.idAlmacen, label: x.nombrealmacen    }) );
-    });
-  }
+    console.log('📦 Almacenes cargados en dropdown:', this.almacenes);
+  });
+}
 
   obtenerPartners() {
     this.cicService.getParterns().subscribe(data => {
@@ -304,25 +318,25 @@ uploadSelectedFiles(): void {
     const sheet = workbook.Sheets[hoja];
 
     // Si los encabezados son: ITEM | S/N | IMEI | MAC | PRODUCTO
-    const datos = XLSX.utils.sheet_to_json(sheet, { defval: '', raw: false });
+    const datos = XLSX.utils.sheet_to_json(sheet, { defval: '', raw: true });
 
-    this.detalles = datos.map((row: any): DocumentoRecepcionDetalle => ({
-      numeropallet: '',
-      caja: '',
-      repuesto: false,
-      idtipoproducto: 1,
-      fila: 1,
-      idproducto: 0, // Si necesitas, puedes mapearlo desde 'PRODUCTO'
-      codigoproducto: row['PRODUCTO']?.toString() || '',
-      serie: row['S/N']?.toString() || '',
-      imei: row['IMEI']?.toString() || '',
-      idmodelo: 0,
-      mac: row['MAC']?.toString() || '',
-      cantidad: 1,
-      fechahorapersonalizacion: null,
-      idusuariopersonalizacion: null,
-      idalmacen: this.form.value.idalmacen
-    }));
+this.detalles = datos.map((row: any): DocumentoRecepcionDetalle => ({
+  numeropallet: '',
+  caja: '',
+  repuesto: row['PRODUCTO']?.toString() || '', // 👈 mostrar producto
+  idtipoproducto: 1,
+  fila: 1,
+  idproducto: 0,
+  codigoproducto: row['PRODUCTO']?.toString() || '',
+  serie: row['S/N'] ? row['S/N'].toString() : '',
+  imei: row['IMEI'] ? row['IMEI'].toString() : '',
+  idmodelo: 0,
+  mac: row['MAC'] ? row['MAC'].toString() : '',
+  cantidad: 1,
+  fechahorapersonalizacion: null,
+  idusuariopersonalizacion: null,
+  idalmacen: this.form.value.idalmacen
+}));
 
     this.messageService.add({
       severity: 'success',
@@ -376,48 +390,48 @@ procesarFormulario(): void {
     accept: () => {
       const model = this.form.value;
 
-      const documentoRecepcion: DocumentoRecepcion = {
-        numeroGuia: model.numeroGuia,
-        idpartner: model.idpartner,
-        idfabricante: model.idfabricante,
-        idproducto: model.idproducto,
-        idalmacen: model.idalmacen,
-        idorigen: model.idorigen,
-        dua: '',
-        numerodocumento: '',
-        documentocliente: '',
-        numerofacturacomercial: '',
-        fechafacturacomercial: '',
-        idtiporecibo: 1,
+      // 👇 nombres como espera el backend
+      const documentoRecepcionBackend: any = {
+        numerodocumento: model.numeroGuia,
         guiaremision: model.numeroGuia,
-        idusuarioregistro: this.userId,
-        idordenservicio: 0,
+        idfabricante: model.idfabricante,
+        IdPartner: model.idpartner,
+        IdProducto: model.idproducto,
+        IdAlmacen: model.idalmacen,
+        idorigen: model.idorigen,
+        FechaRecepcion: model.fechaRecepcion
+          ? new Date(model.fechaRecepcion).toISOString()
+          : null,
         activo: true,
-        fechahoraregistro: new Date().toISOString(),
-        idcliente: model.idcliente,
-        fechaRecepcion: model.fechaRecepcion
-        
+        idusuarioregistro: this.userId,
+        idtiporecibo: 1
       };
 
-      documentoRecepcion.fechafacturacomercial = model.fechafacturacomercial
-  ? new Date(model.fechafacturacomercial).toISOString()
-  : null;
-
-  
-      documentoRecepcion.fechaRecepcion = model.fechaRecepcion
-  ? new Date(model.fechaRecepcion).toISOString()
-  : null;
-
-
+      // 👇 detalles con codigoproducto en minúscula
+      const detallesBackend = this.detalles.map(d => ({
+        numeropallet: d.numeropallet,
+        caja: d.caja,
+        repuesto: false,
+        idtipoproducto: d.idtipoproducto,
+        fila: d.fila,
+        idproducto: d.idproducto,
+        serie: d.serie,
+        imei: d.imei,
+        idmodelo: d.idmodelo,
+        mac: d.mac,
+        cantidad: d.cantidad,
+        idalmacen: d.idalmacen,
+        codigoproducto: d.codigoproducto
+      }));
 
       const payload = {
-        documentoRecepcion: documentoRecepcion,
-        detalles: this.detalles
+        DocumentoRecepcion: documentoRecepcionBackend,
+        Detalles: detallesBackend
       };
 
-      console.log('Payload a enviar:', payload);
+      console.log('📦 Payload a enviar:', payload);
 
-      this.cicService.insertarDocumentoRecepcion(payload).subscribe({
+      this.cicService.procesarMasivo(payload).subscribe({
         next: (resp) => {
           this.messageService.add({
             severity: 'success',
@@ -429,17 +443,15 @@ procesarFormulario(): void {
           this.detalles = [];
         },
         error: (err) => {
-          console.error('Error en el backend:', err);
+          console.error('❌ Error en el backend:', err);
           this.messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: 'Ocurrió un error al procesar.'
+            detail: err.error || 'Ocurrió un error al procesar.'
           });
         }
       });
     }
   });
 }
-
-
 }

@@ -15,7 +15,7 @@ import { ToastModule } from 'primeng/toast';
 import { PanelModule } from 'primeng/panel';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ReparacionService } from '../reparacion.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { EstadoOT, FinalizarReparacionRequest } from '../reparacion.types';
 import { concatMap, finalize, tap } from 'rxjs';
 
@@ -72,6 +72,7 @@ export class DetallepanelComponent implements OnInit {
   constructor(private reparacionService: ReparacionService,
     private confirmationService: ConfirmationService,
     private activatedRoute: ActivatedRoute,
+    private router: Router,
     private messageService: MessageService,
    ) { }
 
@@ -266,11 +267,11 @@ finalizarReparacion(): void {
     rejectLabel: 'No',
     accept: () => {
       const request: FinalizarReparacionRequest = {
-        id: this.id, // ID de la orden de trabajo
-        idOtTiempo: 0, // Debes tenerlo en el componente
-        descripcion: this.model.descripcion || '',
-        informeTecnico: this.model.informetecnico || '',
-        idestado: EstadoOT.Reparado // Asignar el estado de reparado
+        Id: this.id, // ID de la orden de trabajo
+        IdOtTiempo: 0, // Debes tenerlo en el componente
+        Descripcion: this.model.descripcion || '',
+        InformeTecnico: this.model.informetecnico || '',
+        IdEstado: EstadoOT.Reparado // Asignar el estado de reparado
       };
 
       this.reparacionService.finalizarReparacion(request).subscribe({
@@ -286,6 +287,9 @@ finalizarReparacion(): void {
 
           // Opcional: refrescar detalles o redirigir
           this.cargarOrdenTrabajoDetalle();
+
+          
+
         },
         error: (err) => {
           console.error('❌ Error al finalizar reparación:', err);
@@ -369,15 +373,13 @@ confirmarRemozado() {
     acceptLabel: 'Sí, marcar',
     rejectLabel: 'Cancelar',
     accept: () => {
-      //this.marcarRemozado(this.id);
-     
       const request: FinalizarReparacionRequest = {
-          id: this.id, idOtTiempo: 0,
-          descripcion: this.model.descripcion || 'Finalizado por remozado',
-          informeTecnico: this.model.informetecnico || 'Cierre automático al marcar remozado',
-          idestado: EstadoOT.Remozado // Asignar el estado de remozado
+          Id: this.id, 
+          IdOtTiempo: 0,
+          Descripcion: this.model.descripcion || 'Finalizado por remozado',
+          InformeTecnico: this.model.informetecnico || 'Cierre automático al marcar remozado',
+          IdEstado: EstadoOT.Remozado
       };
-
 
       this.reparacionService.finalizarReparacion(request).subscribe({
           next: () => {
@@ -385,61 +387,69 @@ confirmarRemozado() {
             clearInterval(this.intervalRef);
             this.contador = { dias:0, horas:0, minutos:0, segundos:0 };
             this.cargarOrdenTrabajoDetalle();
+
+            // 👇 Agregado igual que irreparable
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: 'El equipo fue marcado como remozado y la OT finalizada.'
+            });
+
+            this.router.navigate(['reparacion/panel']);
+          },
+          error: (err) => {
+            console.error('❌ Error al marcar remozado:', err);
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'No se pudo marcar como remozado.'
+            });
           }
-        });
+      });
     }
   });
 }
- confirmarIrreparable() {
-    this.confirmationService.confirm({
-      message: '¿Estás seguro de que deseas marcar este producto como irreparable?',
-      header: 'Confirmar acción',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Sí, marcar',
-      rejectLabel: 'Cancelar',
-      accept: () => this.flujoIrreparable(),
-    });
-  }
-private flujoIrreparable() {
-    if (this.cargando) return; // evita doble ejecución
-    this.cargando = true;
 
-    this.reparacionService.asignarIrreparable(this.id).pipe(
-      tap((res) => {
-        if (!res?.res) {
-          // fuerza error para que lo capture el subscribe.error
-          throw new Error(res?.mensaje || 'No se pudo marcar como irreparable.');
+confirmarIrreparable() {
+  this.confirmationService.confirm({
+    message: '¿Estás seguro de que deseas marcar este producto como irreparable?',
+    header: 'Confirmar irreparable',
+    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: 'Sí, marcar',
+    rejectLabel: 'Cancelar',
+    accept: () => {
+const request: FinalizarReparacionRequest = {
+  Id: this.id,
+  IdOtTiempo: 0,
+  Descripcion: this.model.descripcion || '',
+  InformeTecnico: this.model.informetecnico || '',
+  IdEstado: EstadoOT.Irreparable
+};
+
+      this.reparacionService.finalizarReparacion(request).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'El equipo fue marcado como irreparable y la OT finalizada.'
+          });
+          // this.bloquearUIyResetearContador();
+          // this.cargarOrdenTrabajoDetalle();
+
+          this.router.navigate(['reparacion/panel']);
+        },
+        error: (err) => {
+          console.error('❌ Error al marcar irreparable:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo marcar como irreparable.'
+          });
         }
-      }),
-      concatMap(() =>
-        this.reparacionService.finalizarReparacion(
-          this.buildFinalizarRequest(EstadoOT.Irreparable)
-        )
-      ),
-      finalize(() => (this.cargando = false))
-    )
-    .subscribe({
-      next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: 'Se marcó irreparable y la OT fue finalizada.',
-        });
-        this.bloquearUIyResetearContador();
-        this.cargarOrdenTrabajoDetalle();
-        // si tienes un método para refrescar estado, úsalo:
-        // this.cargarEstadoOT();
-      },
-      error: (err) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: err?.message || 'No se pudo completar la operación.',
-        });
-      },
-    });
-  }
-
+      });
+    }
+  });
+}
 
 
 // confirmarIrreparable() {
@@ -543,11 +553,11 @@ verAntecedentes() {
 }
   private buildFinalizarRequest(estado: EstadoOT): FinalizarReparacionRequest {
     return {
-      id: this.id,
-      idOtTiempo: 0, // si luego lo tienes real, cámbialo aquí
-      descripcion: this.model.descripcion || 'Cierre automático por irreparable',
-      informeTecnico: this.model.informetecnico || 'Se marca irreparable y se cierra la OT',
-      idestado: estado,
+      Id: this.id,
+      IdOtTiempo: 0, // si luego lo tienes real, cámbialo aquí
+      Descripcion: this.model.descripcion || 'Cierre automático por irreparable',
+      InformeTecnico: this.model.informetecnico || 'Se marca irreparable y se cierra la OT',
+      IdEstado: estado,
     };
   }
   

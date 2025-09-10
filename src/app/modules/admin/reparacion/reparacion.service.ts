@@ -161,8 +161,10 @@ eliminarDetalleReparacion(idDetalle: number): Observable<any> {
   return this._httpClient.delete(`${this.baseUrl}detalle/${idDetalle}`);
 }
 
-finalizarReparacion(data: FinalizarReparacionRequest): Observable<any> {
-  return this._httpClient.put(`${this.baseUrl}finalizar-reparacion`, data);
+finalizarReparacion(request: FinalizarReparacionRequest) {
+
+  console.log('aca xD' ,request);
+  return this._httpClient.put(`${this.baseUrl}finalizar-reparacion`, request);
 }
 
 
@@ -186,9 +188,12 @@ iniciarReparacion(data: { Id: number, IdUsuario: number }): Observable<any> {
   return this._httpClient.post<any>(`${this.baseUrl}iniciar`, data);
 }
 
-getTecnicos(): Observable<UsuarioDto[]> {
-    return this._httpClient.get<UsuarioDto[]>(`${this.baseUrl}listar-tecnicos`);
-  }
+getTecnicos(IdUsuario: number): Observable<UsuarioDto[]> {
+  return this._httpClient.get<UsuarioDto[]>(
+    `${this.baseUrl}listar-tecnicos?IdUser=${IdUsuario}`
+  );
+}
+
 cambiarTecnico(dto: CambiarTecnicoDto): Observable<any> {
     return this._httpClient.put(`${this.baseUrl}cambiar-tecnico`, dto);
   }

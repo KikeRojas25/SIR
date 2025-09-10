@@ -1,0 +1,144 @@
+<div class="flex flex-col flex-auto min-w-0">
+
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between 
+              p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <div class="flex flex-wrap items-center font-medium">
+        <div><a class="whitespace-nowrap text-primary-500">SIR</a></div>
+        <div class="flex items-center ml-1 whitespace-nowrap">
+          <mat-icon class="fuse-horizontal-navigation-item-icon" [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+          <a class="ml-1 text-primary-500">Maestro</a>
+        </div>
+      </div>
+      <div class="mt-2">
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+          Partner
+        </h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Buscador -->
+  <div class="grid grid-cols-1 sm:grid-cols-4 gap-6 p-6">
+    <div class="sm:col-span-1">
+      <div class="p-input-icon-right w-full">
+        <input pInputText [(ngModel)]="model.ruc" placeholder="RUC" class="w-full" />
+      </div>
+    </div>
+    <div class="sm:col-span-1">
+      <div class="p-input-icon-right w-full">
+        <input pInputText [(ngModel)]="model.razon" placeholder="Razón Social" class="w-full" />
+      </div>
+    </div>
+    <div class="sm:col-span-1 flex items-end">
+      <p-button severity="success" icon="pi pi-search" (click)="buscar()" label="Buscar" class="w-full"></p-button>
+    </div>
+    <div class="sm:col-span-1 flex items-end justify-end">
+      <p-button severity="info" icon="pi pi-plus" (click)="nuevo()" label="Nuevo"></p-button>
+    </div>
+  </div>
+
+  <!-- Tabla -->
+  <div class="px-6">
+    <h3 class="text-lg font-semibold mb-4">Listado de Partners</h3>
+    <p-table [value]="partners" class="p-datatable-sm w-full">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Tipo</th>
+          <th>RUC</th>
+          <th>Razón Social</th>
+          <th>Condición Pago</th>
+          <th>Línea Crédito</th>
+          <th>Activo</th>
+          <th>Acciones</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-partner>
+        <tr>
+          <td>{{ partner.tipoPartner }}</td>
+          <td>{{ partner.numeroDocumento }}</td>
+          <td>{{ partner.razonSocial }}</td>
+          <td>{{ partner.condicionPago }}</td>
+          <td>{{ partner.lineaCredito }}</td>
+          <td>
+            <span class="px-2 py-1 rounded text-white text-sm"
+                  [ngClass]="partner.activo ? 'bg-green-500' : 'bg-red-500'">
+              {{ partner.activo ? 'Si' : 'No' }}
+            </span>
+          </td>
+          <td>
+            <button pButton icon="pi pi-pencil" class="p-button-rounded p-button-info p-button-sm mr-2" (click)="editar(partner)"></button>
+            <button pButton icon="pi pi-trash" class="p-button-rounded p-button-danger p-button-sm" (click)="eliminar(partner)"></button>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- Dialog -->
+<p-dialog header="{{ isNuevo ? 'Nuevo Partner' : 'Actualizar Partner' }}" 
+           [(visible)]="displayDialog" 
+           [modal]="true" 
+           [style]="{width: '700px'}">
+
+  <div class="p-fluid formgrid grid">
+    <div class="field col-12 md:col-6">
+      <label for="razonSocial">Razón Social</label>
+      <input id="razonSocial" type="text" pInputText [(ngModel)]="selectedPartner.razonSocial" />
+    </div>
+
+    <div class="field col-12 md:col-6">
+      <label for="numeroDocumento">RUC</label>
+      <input id="numeroDocumento" type="text" pInputText [(ngModel)]="selectedPartner.numeroDocumento" />
+    </div>
+
+    <div class="field col-12 md:col-6">
+      <label for="idTipoPartner">Tipo Partner</label>
+      <p-dropdown [options]="tiposPartner" optionLabel="valor" optionValue="idValorTabla"
+                  [(ngModel)]="selectedPartner.idTipoPartner"></p-dropdown>
+    </div>
+
+    <div class="field col-12 md:col-6">
+      <label for="idCondicionRecojo">Condición Recojo</label>
+      <p-dropdown [options]="condicionesRecojo" optionLabel="valor" optionValue="idValorTabla"
+                  [(ngModel)]="selectedPartner.idCondicionRecojo"></p-dropdown>
+    </div>
+
+    <div class="field col-12 md:col-6">
+      <label for="idCondicionEntrega">Condición Entrega</label>
+      <p-dropdown [options]="condicionesEntrega" optionLabel="valor" optionValue="idValorTabla"
+                  [(ngModel)]="selectedPartner.idCondicionEntrega"></p-dropdown>
+    </div>
+
+    <div class="field col-12 md:col-6">
+      <label for="idCondicionPago">Condición Pago</label>
+      <p-dropdown [options]="condicionesPago" optionLabel="valor" optionValue="idValorTabla"
+                  [(ngModel)]="selectedPartner.idCondicionPago"></p-dropdown>
+    </div>
+
+    <div class="field col-12 md:col-6">
+      <label for="lineaCredito">Línea Crédito</label>
+      <input id="lineaCredito" type="number" pInputText [(ngModel)]="selectedPartner.lineaCredito" />
+    </div>
+
+    <div class="field col-12 md:col-6 flex items-center">
+      <p-checkbox binary="true" [(ngModel)]="selectedPartner.activo" inputId="activo"></p-checkbox>
+      <label for="activo" class="ml-2">Activo</label>
+    </div>
+  </div>
+
+  <!-- Footer del diálogo -->
+  <ng-template pTemplate="footer">
+    <button pButton label="Cancelar" icon="pi pi-times" 
+            (click)="displayDialog=false" class="p-button-text"></button>
+    <button pButton label="Guardar" icon="pi pi-check" 
+            (click)="guardar()" class="p-button-success"></button>
+  </ng-template>
+</p-dialog>
+
+<!-- Toast y ConfirmDialog -->
+<p-toast position="top-right"></p-toast>
+<p-confirmDialog></p-confirmDialog>

@@ -32,13 +32,19 @@
           
           <!-- N° Guía -->
           <div class="flex flex-col">
-            <label for="numeroGuia" class="font-semibold mb-1">N° Guía</label>
-            <input pInputText id="numeroGuia"   formControlName="numeroGuia"  placeholder="Ingrese N° Guía" class="w-full" />
-            <div *ngIf="form.get('numeroGuia')?.invalid && form.get('numeroGuia')?.touched" class="text-red-500 text-sm mt-1">
-             Ingrese una guía
-             </div>
-          </div>
-  
+          <label for="numeroGuia" class="font-semibold mb-1">N° Guía</label>
+            <div class="p-input-icon-right w-full">
+             <i *ngIf="form.get('numeroGuia')?.value" class="pi pi-times cursor-pointer"
+       (click)="form.get('numeroGuia')?.reset()"></i>
+    <input pInputText id="numeroGuia"
+           formControlName="numeroGuia"
+           placeholder="Insertar N° de Guía"
+           class="w-full" />
+  </div>
+  <div *ngIf="form.get('numeroGuia')?.invalid && form.get('numeroGuia')?.touched" class="text-red-500 text-sm mt-1">
+    Ingrese una guía
+  </div>
+</div>
           <!-- Origen -->
           <div class="flex flex-col">
             <label for="origen" class="font-semibold mb-1">Origen</label>
@@ -159,53 +165,49 @@
         <h2 class="text-lg font-bold mb-4">Recepción de Documentos</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
   
-          <!-- Sucursal -->
-          <div class="flex flex-col">
-            <label for="sucursal" class="font-semibold mb-1">Sucursal</label>
-            <p-dropdown
-              [options]="sucursales"
-              formControlName="idsucursal"
-              placeholder="Seleccione Sucursal"
-              [showClear]="true"
-              (onChange)="selectAlmacen($event)"
-              [style]="{'width': '100%'}">
+        <!-- Sucursal -->
+<div class="flex flex-col">
+  <label for="sucursal" class="font-semibold mb-1">Sucursal</label>
+  <p-dropdown
+    [options]="sucursales"
+    formControlName="idsucursal"
+    placeholder="Seleccione Sucursal"
+    [showClear]="true"
+    (onChange)="selectAlmacen($event.value)"
+    [style]="{'width': '100%'}">
 
+    <ng-template let-item pTemplate="selectedItem">
+      <span>{{ item.label }}</span>
+    </ng-template>
+  </p-dropdown>
 
-              <ng-template let-item pTemplate="selectedItem">
-                <span>{{ item.label }}</span>
-              </ng-template>
+  <div *ngIf="form.get('idsucursal')?.invalid && form.get('idsucursal')?.touched"
+       class="text-red-500 text-sm mt-1">
+    Seleccione una sucursal
+  </div>
+</div>
 
+<!-- Almacén -->
+<div class="flex flex-col">
+  <label for="almacen" class="font-semibold mb-1">Almacén</label>
+  <p-dropdown
+    [options]="almacenes"
+    formControlName="idalmacen"
+    placeholder="Seleccione Almacén"
+    [showClear]="true"
+    [style]="{'width': '100%'}">
 
-            </p-dropdown>
+    <ng-template let-item pTemplate="selectedItem">
+      <span>{{ item.label }}</span>
+    </ng-template>
+  </p-dropdown>
 
-            <div *ngIf="form.get('idsucursal')?.invalid && form.get('idsucursal')?.touched" class="text-red-500 text-sm mt-1">
-              Seleccione una sucursal
-              </div>
-          </div>
-  
-          <!-- Almacén -->
-          <div class="flex flex-col">
-            <label for="almacen" class="font-semibold mb-1">Almacén</label>
-            <p-dropdown
-              [options]="almacenes"
-              formControlName="idalmacen"
-              placeholder="Seleccione Almacén"
-              [showClear]="true"
-              [style]="{'width': '100%'}">
-
-              <ng-template let-item pTemplate="selectedItem">
-                <span>{{ item.label }}</span>
-              </ng-template>
-
-
-            </p-dropdown>
-
-            <div *ngIf="form.get('idalmacen')?.invalid && form.get('idalmacen')?.touched" class="text-red-500 text-sm mt-1">
-              Seleccione un almacén
-              </div>
-          </div>
-  
-          <!-- Fecha Recepción -->
+  <div *ngIf="form.get('idalmacen')?.invalid && form.get('idalmacen')?.touched"
+       class="text-red-500 text-sm mt-1">
+    Seleccione un almacén
+  </div>
+</div>
+     <!-- Fecha Recepción -->
           <div class="flex flex-col">
             <label for="fechaRecepcion" class="font-semibold mb-1">Fecha Recepción</label>
             <p-calendar

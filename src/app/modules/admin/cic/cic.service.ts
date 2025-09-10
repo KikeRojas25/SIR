@@ -90,14 +90,9 @@ getProductos(): Observable<any> {
     return this._httpClient.get<DocumentoRecepcion[]>(`${this.baseRecepcionUrl}listar`, { params });
   }
 
+insertarDocumentoRecepcion(payload: any): Observable<any> {
+  return this._httpClient.post(`${this.baseRecepcionUrl}procesarMasivo`, payload);
+}
 
-
-insertarDocumentoRecepcion(payload: {
-  documentoRecepcion: DocumentoRecepcion,
-  detalles: DocumentoRecepcionDetalle[]
-}): Observable<any> {
-
-    return this._httpClient.post<number>(`${this.baseRecepcionUrl}procesarMasivo`, payload);
-  }
 
 }
