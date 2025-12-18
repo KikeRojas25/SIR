@@ -1,0 +1,80 @@
+/* Fondo blanco */
+:host {
+  background-color: #fff !important;
+  display: block;
+}
+
+/* Encabezados de la tabla */
+:host ::ng-deep .p-datatable thead th {
+  background-color: #f4f6f9 !important;
+  color: #333 !important;
+  font-weight: 600;
+  text-align: left;
+  padding: 10px;
+  border-bottom: 2px solid #ddd;
+}
+
+/* Zebra */
+:host ::ng-deep .p-datatable tbody tr:nth-child(odd) {
+  background-color: #fff;
+}
+:host ::ng-deep .p-datatable tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* Hover */
+:host ::ng-deep .p-datatable tbody tr:hover {
+  background-color: #eef6ff !important;
+  transition: 0.2s;
+}
+
+/* Acciones */
+:host ::ng-deep td.acciones {
+  text-align: center;
+}
+
+/* Botones pequeños */
+:host ::ng-deep .p-button-sm {
+  width: 32px;
+  height: 32px;
+}
+:host ::ng-deep .p-inputtext:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px #3b82f6 !important; /* azul Tailwind */
+  border-color: #2563eb !important;
+}
+/* Quitar X nativa de Chrome/Edge */
+input::-webkit-clear-button,
+input::-webkit-search-cancel-button,
+input::-ms-clear {
+  display: none;
+  appearance: none;
+}
+
+/* Estilo general del input */
+.clean-input {
+  border-radius: 6px;
+  padding-right: 2.25rem;
+}
+
+/* Botón X interna */
+.clear-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  transition: color 0.2s ease-in-out;
+}
+
+.clear-btn:hover {
+  color: #ef4444;
+}
+
+/* Mejora visual */
+label {
+  font-weight: 500;
+}

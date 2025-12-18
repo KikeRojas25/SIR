@@ -188,4 +188,11 @@ export class AuthService {
         // If the access token exists, and it didn't expire, sign in using it
         return this.signInUsingToken();
     }
+getUser(): any {
+  const userStr = localStorage.getItem('user');
+  if (!userStr) return null;
+  return JSON.parse(userStr);
 }
+
+}
+

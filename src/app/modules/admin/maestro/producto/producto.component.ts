@@ -13,6 +13,8 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { MaestroService } from '../maestro.service';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { AuthService } from 'app/core/auth/auth.service';
+
 
 @Component({
   selector: 'app-producto',
@@ -77,7 +79,8 @@ export class ProductoComponent implements OnInit {
   constructor(
     private maestroService: MaestroService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private authService: AuthService   // 
   ) {}
 
   ngOnInit(): void {
@@ -245,57 +248,74 @@ export class ProductoComponent implements OnInit {
     });
   }
 
-  guardarNuevo() {
-    const dto: any = {
-      CodigoProducto: this.nuevoProducto.CodigoProducto.trim(),
-      DescripcionCorta: this.nuevoProducto.DescripcionCorta?.trim() || '',
-      DescripcionLarga: this.nuevoProducto.DescripcionLarga?.trim() || null,
-      repuesto: Boolean(this.nuevoProducto.repuesto),
-      IdTipoProducto: Number(this.nuevoProducto.IdTipoProducto),
-      IdFabricante: Number(this.nuevoProducto.IdFabricante),
-      IdModelo: Number(this.nuevoProducto.IdModelo),
-      IdFamilia: this.nuevoProducto.IdFamilia ? Number(this.nuevoProducto.IdFamilia) : null,
-      IdTipoMercaderia: this.nuevoProducto.IdTipoMercaderia ? Number(this.nuevoProducto.IdTipoMercaderia) : null, // 👈 agregado
-      Peso: Number(this.nuevoProducto.Peso) || 0,
-      StockMaximo: Number(this.nuevoProducto.StockMaximo) || 0,
-      Volumen: Number(this.nuevoProducto.Volumen) || 0,
-      IdMoneda: Number(this.nuevoProducto.IdMoneda) || 1,
-      PrecioUnitario: Number(this.nuevoProducto.PrecioUnitario) || 0,
-      Activo: true
-    };
+guardarNuevo() {
 
-    console.log('DTO a enviar:', dto);
+  const user = this.authService.getUser();
 
-    if (this.modoEdicion && this.nuevoProducto.IdProducto) {
-      dto.IdProducto = this.nuevoProducto.IdProducto;
+  console.log("🔥 USER DESDE AUTH SERVICE:", user);
+  console.log("🔥 IDSUCURSAL DETECTADO:", user.idSucursal, " | idsucursal?", user.idsucursal);
+  console.log("🔥 ID USUARIO:", user.id);
+
+  const dto = {
+    CodigoProducto: this.nuevoProducto.CodigoProducto,
+    DescripcionCorta: this.nuevoProducto.DescripcionCorta,
+    DescripcionLarga: this.nuevoProducto.DescripcionLarga,
+    Repuesto: this.nuevoProducto.Repuesto,
+    IdTipoProducto: this.nuevoProducto.IdTipoProducto,
+    IdFabricante: this.nuevoProducto.IdFabricante,
+    IdModelo: this.nuevoProducto.IdModelo,
+    IdFamilia: this.nuevoProducto.IdFamilia,
+    IdTipoMercaderia: this.nuevoProducto.IdTipoMercaderia,
+    Peso: this.nuevoProducto.Peso,
+    StockMaximo: this.nuevoProducto.StockMaximo,
+    Volumen: this.nuevoProducto.Volumen,
+    IdMoneda: this.nuevoProducto.IdMoneda,
+    PrecioUnitario: this.nuevoProducto.PrecioUnitario,
+    Activo: true
+  };
+
+  console.log("📦 DTO ENVIADO A REGISTRAR PRODUCTO:", dto);
+
+  this.maestroService.registrarProducto(dto).subscribe({
+
+    next: (productoCreado: any) => {
+
+      console.log("✅ PRODUCTO CREADO EN BACKEND:", productoCreado);
+
+      const user = this.authService.getUser();
+
+      const invDto = {
+        idProducto: productoCreado.idProducto,
+        idSucursal: user.idSucursal ?? user.idsucursal,
+        idUsuario: user.id
+      };
+
+      console.log("📦 DTO INVENTARIO A ENVIAR:", invDto);
+
+      // 🔥 Enviar inventario con logs completos
+      this.maestroService.crearInventarioInicial(invDto).subscribe({
+        next: (res) => console.log("✔ INVENTARIO CREADO CORRECTAMENTE:", res),
+        error: (err) => console.error("❌ ERROR AL CREAR INVENTARIO:", err)
+      });
+
+      this.dialogNuevo = false;
+      this.buscar();
+    },
+
+    error: (err) => {
+      console.error("❌ ERROR AL CREAR PRODUCTO:", err);
+      this.messageService.add({
+        severity: "error",
+        summary: "Error",
+        detail: err.error
+      });
     }
 
-    const request = this.modoEdicion
-      ? this.maestroService.actualizarProducto(dto)
-      : this.maestroService.registrarProducto(dto);
+  });
 
-    request.subscribe({
-      next: () => {
-        this.dialogNuevo = false;
-        this.buscar();
-        this.modoEdicion = false;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Éxito',
-          detail: this.modoEdicion
-            ? '✅ Producto actualizado correctamente'
-            : '✅ Producto registrado con éxito'
-        });
-      },
-      error: (err) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: err.error
-        });
-      }
-    });
-  }
+}
+
+
 
   actualizarProducto() {
     this.guardarNuevo(); // 👈 reutilizamos lógica

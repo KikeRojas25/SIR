@@ -113,4 +113,56 @@ getFabricantes(): Observable<any[]> {
 getModelos(): Observable<any[]> {
   return this._httpClient.get<any[]>(`${this.baseUrl}/GetModelos`);
 }
+getDiagnosticoxCriterio(filtro: any): Observable<any[]> {
+  let params = new HttpParams();
+
+  if (filtro.idCategoriaReparacion)
+    params = params.set('idCategoriaReparacion', filtro.idCategoriaReparacion);
+  if (filtro.idFabricante)
+    params = params.set('idFabricante', filtro.idFabricante);
+  if (filtro.idTipoProducto)
+    params = params.set('idTipoProducto', filtro.idTipoProducto);
+  if (filtro.idTipoDiagnostico)
+    params = params.set('idTipoDiagnostico', filtro.idTipoDiagnostico);
+  if (filtro.garantia)
+    params = params.set('garantia', filtro.garantia);
+
+  return this._httpClient.get<any[]>(`${this.baseUrl}/GetDiagnosticoxCriterio`, { params });
+}
+
+guardarDiagnostico(diagnostico: any): Observable<any> {
+  return this._httpClient.post(`${this.baseUrl}/GuardarDiagnostico`, diagnostico);
+}
+
+eliminarDiagnostico(id: number) {
+  return this._httpClient.delete(`${this.baseUrl}/DeleteDiagnostico?idDiagnosticosmartway=${id}`);
+}
+
+vincularDiagnosticoTipoProducto(payload: { idDiagnosticosmartway: number; idTipoProducto: number }): Observable<any> {
+  return this._httpClient.post(`${this.baseUrl}/VincularDiagnosticoTipoProducto`, payload);
+}
+getCategoriasReparacion(): Observable<any[]> {
+  return this._httpClient.get<any[]>(`${this.baseUrl}/GetCategoriasReparacion`);
+}
+ getUser(): any {
+  try {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) return null;
+
+    const user = JSON.parse(userStr);
+
+    if (!user || !user.id) return null;
+
+    return user;
+  } catch (e) {
+    console.error("❌ Error leyendo usuario del localStorage", e);
+    return null;
+  }
+
+ }
+crearInventarioInicial(dto: any) {
+  return this._httpClient.post(`${this.baseUrl}/CrearInventarioInicial`, dto);
+}
+
+
 }

@@ -71,3 +71,14 @@ export interface Producto {
   fabricante?: string;
   modelo?: string;
 }
+export interface Diagnostico {
+  idDiagnostico: number | null;
+  codigoSmartway: string;
+  descripcion: string;
+  idCategoriaReparacion: number | null;
+  categoriaReparacion?: string;
+  idFabricante: number | null;
+  categoriaDescripcion?: string;   // opcional si viene del JOIN
+  fabricanteDescripcion?: string;  // opcional si viene del JOIN
+}
+
