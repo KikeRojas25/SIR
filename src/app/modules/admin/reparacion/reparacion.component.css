@@ -33,11 +33,7 @@
   text-align: center;
 }
 
-/* Botones pequeños */
-:host ::ng-deep .p-button-sm {
-  width: 32px;
-  height: 32px;
-}
+
 :host ::ng-deep .p-inputtext:focus {
   outline: none !important;
   box-shadow: 0 0 0 2px #3b82f6 !important; /* azul Tailwind */

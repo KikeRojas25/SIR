@@ -1,3 +1,305 @@
-<p>
-  operacionesinventario works!
-</p>
+<div class="flex flex-col flex-auto min-w-0">
+
+    <!-- ENCABEZADO -->
+    <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card">
+        <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center font-medium">
+                <div>
+                    <a class="whitespace-nowrap text-primary-500">SIR</a>
+                </div>
+
+                <div class="flex items-center ml-1 whitespace-nowrap">
+                    <mat-icon [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+                    <a class="ml-1 text-primary-500">Inventario</a>
+                </div>
+            </div>
+
+            <h2 class="text-3xl md:text-4xl font-extrabold mt-2">Operaciones Inventario</h2>
+        </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="card m-6 shadow-md">
+
+        <div class="card-header bg-gray-100 py-2 px-3 border-b">
+            <strong>Filtro de búsqueda</strong>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="grid grid-cols-6 gap-4">
+
+                <!-- Sucursal -->
+                <div>
+                    <label class="block mb-1">Sucursal</label>
+                    <p-dropdown
+                        [options]="sucursales"
+                        [(ngModel)]="sucursalSeleccionada"
+                        (onChange)="onSucursalChange($event)"
+                        placeholder="Seleccionar">
+                    </p-dropdown>
+                </div>
+
+                <!-- Almacén -->
+                <div>
+                    <label class="block mb-1">Almacén</label>
+                    <p-dropdown
+                        [options]="almacenes"
+                        [(ngModel)]="almacenSeleccionado"
+                        placeholder="Seleccionar">
+                    </p-dropdown>
+                </div>
+
+                <!-- Producto -->
+                <div>
+                    <label class="block mb-1">Producto</label>
+                    <p-dropdown
+                        [options]="productos"
+                        appendTo="body"
+                        [(ngModel)]="productoSeleccionado"
+                        placeholder="Seleccionar"
+                        [filter]="true"
+                        filterBy="label"
+                        [showClear]="true"
+                        emptyMessage="No se encontraron productos">
+                    </p-dropdown>
+                </div>
+
+                <!-- Estado -->
+                <div>
+                    <label class="block mb-1">Estado</label>
+                    <p-dropdown
+                        [options]="estados"
+                        [(ngModel)]="estadoSeleccionado"
+                        placeholder="Seleccionar">
+                    </p-dropdown>
+                </div>
+
+                <!-- Serie -->
+                <div class="flex flex-col">
+                    <label class="block mb-1">Serie</label>
+                    <div class="p-input-icon-right w-full relative">
+                        <input
+                            pInputText
+                            [(ngModel)]="serie"
+                            placeholder="Ej. 2155CA..."
+                            class="w-full" />
+
+                        <button
+                            *ngIf="serie"
+                            type="button"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none border-none bg-transparent"
+                            (click)="limpiarCampo('serie')">
+                            <i class="pi pi-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- IMEI -->
+                <div class="flex flex-col">
+                    <label class="block mb-1">IMEI</label>
+                    <div class="p-input-icon-right w-full relative">
+                        <input
+                            pInputText
+                            [(ngModel)]="imei"
+                            placeholder="Ej. 2155CA..."
+                            class="w-full" />
+
+                        <button
+                            *ngIf="imei"
+                            type="button"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 focus:outline-none border-none bg-transparent"
+                            (click)="limpiarCampo('imei')">
+                            <i class="pi pi-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BOTONES -->
+            <div class="flex flex-wrap items-center justify-start space-x-3 mt-6">
+                <button
+                    pButton
+                    type="button"
+                    label="Buscar"
+                    icon="pi pi-search"
+                    class="p-button-info"
+                    (click)="buscarInventario()">
+                </button>
+
+                <button
+                    pButton
+                    type="button"
+                    label="Exportar"
+                    icon="pi pi-file-excel"
+                    class="p-button-success"
+                    (click)="exportar()">
+                </button>
+
+                <button
+                    pButton
+                    type="button"
+                    label="Agregar"
+                    icon="pi pi-plus"
+                    class="p-button-success"
+                    (click)="abrirModalAgregar()">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TABLA -->
+    <div class="card mx-6 mb-10 shadow-md">
+        <div class="card-header bg-gray-100 py-2 px-3 border-b">
+            <strong>Inventario de producto</strong>
+        </div>
+
+        <div class="card-body p-4">
+            <p-table [value]="inventario" [paginator]="true" [rows]="10">
+
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th>Código</th>
+                        <th>Producto</th>
+                        <th>Modelo</th>
+                        <th>Serie</th>
+                        <th>IMEI</th>
+                        <th>Repuesto</th>
+                        <th>Estado</th>
+                        <th>Cantidad</th>
+                        <th>Acciones</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-row>
+                    <tr>
+                        <td>{{ row.codigo }}</td>
+                        <td>{{ row.producto }}</td>
+                        <td>{{ row.modelo }}</td>
+                        <td>{{ row.serie }}</td>
+                        <td>{{ row.imei }}</td>
+
+                        <td>
+                                {{ row.repuesto }}
+                      
+                        </td>
+
+                        <td>{{ row.estado }}</td>
+                        <td>{{ row.cantidad }}</td>
+
+                        <td>
+                            <button
+                                pButton
+                                icon="pi pi-pencil"
+                                class="p-button-sm p-button-info"
+                                (click)="editarInventario(row)">
+                            </button>
+                        </td>
+                    </tr>
+                </ng-template>
+
+            </p-table>
+        </div>
+    </div>
+
+    <p-toast></p-toast>
+
+
+    <!-- MODAL AGREGAR INVENTARIO -->
+    <p-dialog
+      header="Agregar Inventario Manual"
+      [(visible)]="modalAgregarVisible"
+      [modal]="true"
+      [style]="{ width: '950px' }"
+    >
+      <div class="grid grid-cols-1 gap-4">
+
+        <div>
+          <label>Almacén</label>
+          <p-dropdown
+            [options]="almacenes"
+           appendTo="body"
+            [(ngModel)]="nuevoInventario.idAlmacen"
+            placeholder="Seleccionar"
+          ></p-dropdown>
+        </div>
+
+        <div>
+          <label>Producto</label>
+          <p-dropdown
+            [options]="productos"
+                       appendTo="body"
+            [(ngModel)]="nuevoInventario.idProducto"
+            placeholder="Seleccionar"
+            [filter]="true"
+          ></p-dropdown>
+        </div>
+
+        <div>
+          <label>Cantidad</label>
+          <input type="number" pInputText [(ngModel)]="nuevoInventario.cantidad" />
+        </div>
+
+        <div>
+          <label>Serie (opcional)</label>
+          <input type="text" pInputText [(ngModel)]="nuevoInventario.serie" />
+        </div>
+
+        <div>
+          <label>IMEI (opcional)</label>
+          <input type="text" pInputText [(ngModel)]="nuevoInventario.imei" />
+        </div>
+
+        <div>
+          <label>MAC (opcional)</label>
+          <input type="text" pInputText [(ngModel)]="nuevoInventario.mac" />
+        </div>
+
+      </div>
+
+      <ng-template pTemplate="footer">
+        <button pButton class="p-button-text" label="Cancelar"
+          (click)="modalAgregarVisible = false"></button>
+
+        <button pButton class="p-button-success" label="Guardar"
+          icon="pi pi-save" (click)="guardarInventario()"></button>
+      </ng-template>
+    </p-dialog>
+
+
+
+    <!-- 🔵 MODAL EDITAR INVENTARIO -->
+    <p-dialog
+      header="Editar Cantidad"
+      [(visible)]="modalEditarVisible"
+      [modal]="true"
+      [style]="{ width: '350px' }"
+    >
+      <div class="grid grid-cols-1 gap-4">
+
+        <div>
+          <label>Nueva cantidad</label>
+          <input
+            type="number"
+            pInputText
+            [(ngModel)]="inventarioEditar.cantidad"
+          />
+        </div>
+
+      </div>
+
+      <ng-template pTemplate="footer">
+        <button pButton class="p-button-text" label="Cancelar"
+          (click)="modalEditarVisible = false"></button>
+
+        <button
+          pButton
+          class="p-button-info"
+          label="Actualizar"
+          icon="pi pi-save"
+          (click)="guardarEdicion()">
+        </button>
+      </ng-template>
+    </p-dialog>
+
+</div>

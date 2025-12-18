@@ -4,25 +4,6 @@ import { environment } from 'environments/environment';
 import { Observable } from 'rxjs';
 import { DocumentoRecepcion, DocumentoRecepcionDetalle } from './cic.type';
 
-
-
-const httpOptions = {
-  headers: new HttpHeaders({
-    Authorization : 'Bearer ' + localStorage.getItem('token'),
-    'Content-Type' : 'application/json'
-  }),
-      responseType: 'blob' // Configura para recibir un archivo
-  // , observe: 'body', reportProgress: true };
-};
-const httpOptionsUpload = {
-  headers: new HttpHeaders({
-    'Authorization': 'Bearer ' + localStorage.getItem('token')
-  }),
-  responseType: 'blob' // Configura para recibir un archivo
-};
-
-
-
 @Injectable({
   providedIn: 'root'
 })
@@ -32,55 +13,40 @@ export class CicService {
   private baseUrl = environment.baseUrl + '/api/mantenimiento/';
   private baseRecepcionUrl = environment.baseUrl + '/api/recepcion/';
 
+  constructor() { }
 
-constructor() { }
+  // ---------- 📌 Subir archivo ----------
+  uploadFile(usrid: number, file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file);
 
-uploadFile(usrid: number, file: File) {
-  const formData = new FormData();
-  formData.append('file', file);
+    const httpOptionsUpload = {
+      headers: new HttpHeaders({
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
+      })
+    };
 
-  const httpOptionsUpload = {
-    headers: new HttpHeaders({
-      'Authorization': 'Bearer ' + localStorage.getItem('token')
-    })
-  };
+    return this._httpClient.post(`${this.baseRecepcionUrl}UploadFile?usrid=${usrid}`, formData, httpOptionsUpload);
+  }
 
-  // Aquí especificamos responseType en la llamada al método post
-  return this._httpClient.post(`${this.baseRecepcionUrl}UploadFile?usrid=${usrid}`, formData, {
-    ...httpOptionsUpload, // Desestructuramos httpOptionsUpload
+  // ---------- 📌 Procesar masivo ----------
+  procesarMasivo(data: any): Observable<any> {
+    return this._httpClient.post(`${this.baseRecepcionUrl}ProcesarMasivo`, data);
+  }
+
+  // ---------- 📌 Procesar unitario ----------
+  procesarUnitario(data: any): Observable<any> {
+    return this._httpClient.post(`${this.baseRecepcionUrl}ProcesarUnitario`, data);
+  }
+
+  // ---------- 📌 Eliminar unitario (DELETE físico) ----------
+deleteProcesarUnitario(dto: { IdDocumentoRecepcion: number }): Observable<any> {
+  return this._httpClient.request('delete', `${this.baseRecepcionUrl}Deleteprocesarunitario`, {
+    body: dto
   });
 }
 
-
-procesarMasivo(data: any): Observable<any> {
-  return this._httpClient.post(`${this.baseRecepcionUrl}ProcesarMasivo`, data);
-}
-
-getAllValorTabla(tablaId: number): Observable<any> {
-  return this._httpClient.get(`${this.baseUrl}GetAllValorTabla?TablaId=${tablaId}`);
-}
-
-getClientes(): Observable<any> {
-  return this._httpClient.get(`${this.baseUrl}GetClientes`);
-}
-
-getSucursal(): Observable<any> {
-  return this._httpClient.get(`${this.baseUrl}GetSucursal`);
-}
-
-getAlmacenes(idSucursal: number): Observable<any> {
-  return this._httpClient.get(`${this.baseUrl}GetAlmacenes?IdSucursal=${idSucursal}`);
-}
-
-getParterns(): Observable<any> {
-  return this._httpClient.get(`${this.baseUrl}GetPartners`);
-}
-
-getProductos(): Observable<any> {
-  return this._httpClient.get(`${this.baseUrl}GetProductos`);
-}
-
-
+  // ---------- 📌 Listar documentos ----------
   listarDocumentosRecepcion(fecini?: string, fecfin?: string, numeroordenservicio?: string): Observable<DocumentoRecepcion[]> {
     let params = new HttpParams();
     if (fecini) params = params.set('fecini', fecini);
@@ -90,9 +56,77 @@ getProductos(): Observable<any> {
     return this._httpClient.get<DocumentoRecepcion[]>(`${this.baseRecepcionUrl}listar`, { params });
   }
 
-insertarDocumentoRecepcion(payload: any): Observable<any> {
-  return this._httpClient.post(`${this.baseRecepcionUrl}procesarMasivo`, payload);
+  // ---------- 📌 Otros endpoints de mantenimiento ----------
+  getAllValorTabla(tablaId: number): Observable<any> {
+    return this._httpClient.get(`${this.baseUrl}GetAllValorTabla?TablaId=${tablaId}`);
+  }
+
+  getClientes(): Observable<any> {
+    return this._httpClient.get(`${this.baseUrl}GetClientes`);
+  }
+
+// Traer todas las sucursales
+getSucursal(): Observable<any[]> {
+  return this._httpClient.get<any[]>(`${this.baseUrl}GetSucursal`);
+}
+// Verificar duplicado de guía
+verificarDuplicado(guia: string, idSucursal: number, idAlmacen: number) {
+  const params = {
+    guia: guia.trim(),
+    idSucursal: idSucursal.toString(),
+    idAlmacen: idAlmacen.toString()
+  };
+  return this._httpClient.get<boolean>(`${this.baseUrl}VerificarDuplicado`, { params });
 }
 
+// Traer sucursales por criterio
+getSucursalxCriterio(codigo?: string, nombre?: string, idPartner?: number): Observable<any[]> {
+  let params = new HttpParams()
+    .set('codigo', codigo || '')
+    .set('nombre', nombre || '')
+    .set('idPartner', idPartner?.toString() || '');
+
+  return this._httpClient.get<any[]>(`${this.baseUrl}GetSucursalxCriterio`, { params });
+}
+
+
+
+getAlmacenes(idSucursal: number): Observable<any[]> {
+  return this._httpClient.get<any[]>(`${this.baseUrl}GetAlmacenes?IdSucursal=${idSucursal}`);
+}
+
+  getPartners(): Observable<any[]> {
+    return this._httpClient.get<any[]>(`${this.baseUrl}GetPartnerxCriterio`);
+  }
+
+getProductos(codigo?: string): Observable<any> {
+  if (codigo) {
+    // 👉 Buscar por criterio si hay código
+       return this._httpClient.get<any[]>(
+      `${this.baseUrl}GetProductosxCriterio?codigo=${codigo}`
+    );
+  } else {
+    // 👉 Si no hay código, traer todos
+    return this._httpClient.get(`${this.baseUrl}GetProductos`);
+  }
+}
+  getValoresTabla(IdMaestroTabla: number): Observable<any[]> {
+    let params = new HttpParams().set('idMaestroTabla', String(IdMaestroTabla));
+    return this._httpClient.get<any[]>(`${this.baseUrl}GetValoresTabla`, { params });
+  }
+
+  // ---------------------------
+  // 📌 FABRICANTES
+  // ---------------------------
+  getFabricantes(): Observable<any[]> {
+    return this._httpClient.get<any[]>(`${this.baseUrl}GetFabricantes`);
+  }
+
+  // ---------------------------
+  // 📌 MODELOS
+  // ---------------------------
+  getModelos(): Observable<any[]> {
+    return this._httpClient.get<any[]>(`${this.baseUrl}GetModelos`);
+  }
 
 }

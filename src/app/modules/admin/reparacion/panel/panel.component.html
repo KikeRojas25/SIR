@@ -102,16 +102,16 @@
       <tr [pSelectableRow]="rowData">
         <td class="ui-resizable-column"> {{ rowData.numeroost }} </td>
     
-          <td class="ui-resizable-column"> {{ rowData.imei }} </td>
+          
           <td class="ui-resizable-column"> {{ rowData.producto }} </td>
           <td class="ui-resizable-column"> {{ rowData.serie }} </td>
     
           <td class="ui-resizable-column" [ngClass]="getEstadoClass(rowData.otestado)">
             {{ rowData.otestado }}
           </td>
-           <td class="ui-resizable-column">
+           <!-- <td class="ui-resizable-column">
             {{ rowData.cliente }}
-          </td>
+          </td> -->
                      <td class="ui-resizable-column">
             {{ rowData.sucursalorigen }}
           </td>
@@ -137,18 +137,7 @@
               <i class="pi pi-check-circle" style="color: green; font-size: 1.2rem;" title="Completada"></i>
             </div>
           
-              <!-- <p-button *ngIf="rowData.otestado !== 'Detenida' 
-                  && rowData.otestado !== 'En Atención' 
-                  && rowData.otestado !== 'Completada'"
-                
-                    severity="danger"
-                    size="small"
-                    iconClass="fa fa-search"
-                    (click)="iniciar(rowData)"
-                    label="Iniciar">
-          </p-button> -->
-
-          <!-- Si estado es null/undefined/"" => Asignarme -->
+            
               <p-button *ngIf="!rowData.otestado || (rowData.otestado !== 'Detenida' && rowData.otestado !== 'En Atención' && rowData.otestado !== 'Completada')"
                         severity="danger"
                         size="small"
@@ -159,6 +148,8 @@
 
           
             </ng-container>
+
+          </td>
       </tr>
     </ng-template>
 </p-table>

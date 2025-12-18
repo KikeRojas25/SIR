@@ -55,7 +55,7 @@ export class DetallepanelComponent implements OnInit {
   repuestos:  SelectItem[] = [];
   antecedentes: any[] = [];
   mostrarDialogAntecedentes = false;
-
+ordenServicio: any = {};
     cargando = false;
 
     controlesBloqueados = false;
@@ -86,6 +86,24 @@ export class DetallepanelComponent implements OnInit {
 
     this.cargarOrdenTrabajoDetalle();
 
+
+      this.reparacionService.obtenerOrdenServicio(this.id).subscribe({
+    next: (data) => {
+      console.log('✅ Orden de servicio obtenida:', data);
+      this.model.descripcion = data.informeTecnico;  // 👈 por ejemplo, llenar tu caja de texto
+      this.ordenServicio = data;               // 👈 guardar el objeto completo si lo necesitas
+    },
+    error: (err) => {
+      console.error('❌ Error al obtener la orden de servicio:', err);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo cargar la información de la orden de servicio.'
+      });
+    }
+  });
+
+
     // this.reparacionService.obtenerEstadoOT(this.id).subscribe(e => this.estaFinalizada = e.finalizada);
   }
   
@@ -102,8 +120,12 @@ export class DetallepanelComponent implements OnInit {
   }
 
 cargarOrdenTrabajoDetalle() {
-  this.reparacionService.listarOrdenTrabajoDetalle(this.id).subscribe({
-    next: (data) => this.detalles = data,
+ this.reparacionService.listarOrdenTrabajoDetalle(this.id).subscribe({
+    next: (data) => {
+      this.detalles = data;
+
+     
+    },
     error: (err) => console.error('❌ Error al cargar detalles de orden de trabajo:', err)
   });
 }
@@ -218,46 +240,53 @@ cargarReparaciones(idCategoriaReparacion: number) {
     }
   });
 }
-
-agregarDetalle()  {
-
-  this.model.IdOrdenServicio =  this.id;
+agregarDetalle() {
+  this.model.IdOrdenServicio = this.id;
 
   this.confirmationService.confirm({
-    acceptLabel: 'Agregar',                   // Texto del botón "Aceptar"
-    rejectLabel: 'Cancelar',                  // Texto del botón "Rechazar"
-    acceptIcon: 'pi pi-check',                // Icono del botón "Aceptar"
-    rejectIcon: 'pi pi-times',                // Icono del botón "Rechazar"
+    acceptLabel: 'Agregar',
+    rejectLabel: 'Cancelar',
+    acceptIcon: 'pi pi-check',
+    rejectIcon: 'pi pi-times',
     message: '¿Está seguro que desea agregar el detalle a la reparación?',
     header: 'Confirmar',
     icon: 'pi pi-exclamation-triangle',
     accept: () => {
       this.reparacionService.agregarReparacion(this.model).subscribe({
-        next: (res) => {
-          console.log('Reparación agregada con éxito:', res);
-          this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Se ha agregado Correctamente' });
-          this.cargarOrdenTrabajoDetalle();
-          // puedes mostrar un mensaje, reiniciar formulario, etc.
+        next: (res: any) => {
+          console.log('Respuesta del servidor:', res);
+
+          if (res.res === false) {
+            // ⚠️ Caso: backend devolvió res=false
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'Aviso',
+              detail: res.msj || 'No se pudo agregar el detalle.'
+            });
+          } else {
+            // ✅ Caso exitoso
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Éxito',
+              detail: res.msj || 'Se ha agregado correctamente.'
+            });
+            this.cargarOrdenTrabajoDetalle();
+          }
         },
         error: (err) => {
-          console.error('Error al agregar reparación:', err);
-          this.messageService.add({ severity: 'error', summary: 'Ocurrió un error', detail: 'No se ha podido agregar el detalle a la reparación. Intente nuevamente.' });
-
+          console.error('Error en la solicitud:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se ha podido agregar el detalle. Intente nuevamente.'
+          });
         }
       });
-     // this.messageService.add({ severity: 'success', summary: 'Éxito', detail: 'Se ha agregado Correctamente' });
-
-   
-
-
-
-    } ,
-    reject: () => {
-    }
-    });
-
-
+    },
+    reject: () => {}
+  });
 }
+
 finalizarReparacion(): void {
   this.confirmationService.confirm({
     message: '¿Está seguro que desea finalizar esta reparación?',
@@ -342,7 +371,7 @@ confirmarPausaReparacion() {
 }
 
 pausarReparacion() {
-  this.reparacionService.pausarReparacion(this.id).subscribe({
+  this.reparacionService.pausarReparacion(this.id, this.model.descripcion).subscribe({
     next: () => {
       this.messageService.add({
         severity: 'info',

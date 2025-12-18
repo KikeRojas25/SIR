@@ -1,0 +1,141 @@
+<div class="flex flex-col flex-auto min-w-0">
+  <!-- Encabezado -->
+  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+    <div class="flex-1 min-w-0">
+      <div class="flex flex-wrap items-center font-medium">
+        <div><a class="whitespace-nowrap text-primary-500">SIR</a></div>
+        <div class="flex items-center ml-1 whitespace-nowrap">
+          <mat-icon class="fuse-horizontal-navigation-item-icon" [svgIcon]="'heroicons_solid:chevron-right'"></mat-icon>
+          <a class="ml-1 text-primary-500">Recepción</a>
+        </div>
+      </div>
+      <div class="mt-2">
+        <h2 class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+          Generar Orden de Servicio
+        </h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario -->
+  <div class="p-6">
+    <form (ngSubmit)="guardar()" #recepcionForm="ngForm" class="grid gap-6">
+
+      <!-- Fila 1 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="relative">
+  <label class="font-medium block mb-1">Guía de Remisión</label>
+  <input
+    pInputText
+    [(ngModel)]="formData.guiaRemision"
+    name="guiaRemision"
+    required
+    placeholder="Ingrese Guía de Remisión"
+    class="w-full pr-10"
+  />
+  <i *ngIf="formData.guiaRemision"
+     class="pi pi-times absolute right-3 top-9 cursor-pointer text-gray-400 hover:text-red-500"
+     (click)="formData.guiaRemision=''">
+  </i>
+</div>
+
+
+        <div>
+          <label class="font-medium block mb-1">Fecha Recepción</label>
+          <p-calendar [(ngModel)]="formData.fechaRecepcion" name="fechaRecepcion"
+                      [showIcon]="true" dateFormat="dd/mm/yy" appendTo="body" class="w-full">
+          </p-calendar>
+        </div>
+      </div>
+
+      <!-- Fila 2 -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="relative">
+          <label class="font-medium block mb-1">Código Producto</label>
+          <input pInputText [(ngModel)]="formData.codigoProducto" name="codigoProducto"
+                 (ngModelChange)="buscarProducto()" placeholder="Ingrese código"
+                 required class="w-full pr-10" />
+          <i *ngIf="formData.codigoProducto"
+             class="pi pi-times absolute right-3 top-9 cursor-pointer text-gray-400 hover:text-red-500"
+             (click)="formData.codigoProducto=''; formData.descripcion=''; formData.idProducto=0"></i>
+        </div>
+
+        <div>
+          <label class="font-medium block mb-1">Descripción</label>
+          <input pInputText [(ngModel)]="formData.descripcion" name="descripcion"
+                 readonly class="w-full bg-gray-100" />
+        </div>
+
+        <div class="relative">
+          <label class="font-medium block mb-1">Serie</label>
+          <input pInputText [(ngModel)]="formData.serie" name="serie" required class="w-full pr-10" />
+          <i *ngIf="formData.serie"
+             class="pi pi-times absolute right-3 top-9 cursor-pointer text-gray-400 hover:text-red-500"
+             (click)="formData.serie=''"></i>
+        </div>
+      </div>
+
+      <!-- Fila 3+ -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label class="font-medium block mb-1">Cliente</label>
+          <p-dropdown [options]="clientes" [(ngModel)]="formData.idCliente"
+                      name="idCliente" optionLabel="label" optionValue="value"
+                      placeholder="Seleccione Cliente" class="w-full" required>
+          </p-dropdown>
+        </div>
+
+        <div>
+          <label class="font-medium block mb-1">Partner</label>
+          <p-dropdown [options]="partners" [(ngModel)]="formData.idPartner"
+                      name="idPartner" optionLabel="label" optionValue="value"
+                      placeholder="Seleccione Partner" class="w-full" required>
+          </p-dropdown>
+        </div>
+
+        <div>
+          <label class="font-medium block mb-1">Fabricante</label>
+          <p-dropdown [options]="fabricantes" [(ngModel)]="formData.idFabricante"
+                      name="idFabricante" optionLabel="label" optionValue="value"
+                      placeholder="Seleccione Fabricante" class="w-full" required>
+          </p-dropdown>
+        </div>
+
+        <div>
+          <label class="font-medium block mb-1">Origen</label>
+          <p-dropdown [options]="origenes" [(ngModel)]="formData.idOrigen"
+                      name="idOrigen" optionLabel="label" optionValue="value"
+                      placeholder="Seleccione Origen" class="w-full" required>
+          </p-dropdown>
+        </div>
+
+        <div>
+          <label class="font-medium block mb-1">Sucursal</label>
+          <p-dropdown [options]="sucursales" [(ngModel)]="formData.idSucursal"
+                      name="idSucursal" optionLabel="label" optionValue="value"
+                      placeholder="Seleccione Sucursal" class="w-full"
+                      (onChange)="cargarAlmacenes($event.value)" required>
+          </p-dropdown>
+        </div>
+
+        <div>
+          <label class="font-medium block mb-1">Almacén</label>
+          <p-dropdown [options]="almacenes" [(ngModel)]="formData.idAlmacen"
+                      name="idAlmacen" optionLabel="nombreAlmacen" optionValue="idAlmacen"
+                      placeholder="Seleccione Almacén" class="w-full">
+          </p-dropdown>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="flex gap-3 mt-4">
+        <button pButton type="submit" label="Guardar" class="p-button-success"
+                [disabled]="!recepcionForm.form.valid || !formData.idProducto"></button>
+        <button pButton type="button" label="Eliminar" class="p-button-danger"
+                (click)="eliminar()"></button>
+      </div>
+    </form>
+  </div>
+
+  <p-toast></p-toast>
+</div>

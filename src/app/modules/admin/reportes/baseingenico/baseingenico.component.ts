@@ -170,12 +170,12 @@ export class BaseingenicoComponent implements OnInit {
 
       console.log('almacen', data);
 
-      this.almacenes =  data.map((x: any)=> ({ value: x.idAlmacen, label: x.nombrealmacen    }) );
+      this.almacenes =  data.map((x: any)=> ({ value: x.idAlmacen, label: x.nombreAlmacen    }) );
     });
   }
   obtenerSucursales() {
     this.cicService.getSucursal().subscribe(data => {
-      this.sucursales = data.map((x: any)=> ({ value: x.idsucursal, label: x.nombre    }) )
+      this.sucursales = data.map((x: any)=> ({ value: x.idSucursal, label: x.nombre    }) )
     });
   }
   

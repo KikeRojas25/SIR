@@ -23,6 +23,7 @@ export interface ListarOrdenTrabajoDetalleResult {
   repuestos: string;
   serie: string;
   imei: string;
+  informeTecnico: string;
   // Agrega aquí los demás campos si existen en el DTO
 }
 export interface FinalizarReparacionRequest {

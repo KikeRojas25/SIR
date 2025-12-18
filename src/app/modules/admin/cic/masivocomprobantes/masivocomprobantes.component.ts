@@ -18,6 +18,7 @@ import { CicService } from '../cic.service';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DocumentoRecepcion, DocumentoRecepcionDetalle } from '../cic.type';
 import * as XLSX from 'xlsx';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 
 @Component({
@@ -97,6 +98,9 @@ export class MasivocomprobantesComponent implements OnInit {
   uploadedFilePath: string = null;
   userId: number;
 
+    jwtHelper = new JwtHelperService();
+    decodedToken: any = {};
+
   form: FormGroup;
 
   constructor( private authService: AuthService,
@@ -113,12 +117,19 @@ export class MasivocomprobantesComponent implements OnInit {
     }
 
   ngOnInit(): void {
+
+
+     const user  = localStorage.getItem('token');
+    this.decodedToken = this.jwtHelper.decodeToken(user);
+    this.userId = this.decodedToken.nameid;
+
+
     this.obtenerValorTabla(34); // Ejemplo con TablaId 1
     this.obtenerClientes();
     this.obtenerSucursales();
     this.obtenerPartners();
     this.obtenerProductos();
-    this.userId = 2;
+
 
     this.form = this.fb.group({
       numeroGuia: ['', Validators.required],
@@ -212,7 +223,7 @@ obtenerAlmacenes(idSucursal: number) {
 }
 
   obtenerPartners() {
-    this.cicService.getParterns().subscribe(data => {
+    this.cicService.getPartners().subscribe(data => {
       console.log(data);
       this.partners = data.map((x: any)=> ({ value: x.idPartner, label: x.razonSocial    }) )
     });

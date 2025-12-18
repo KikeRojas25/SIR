@@ -111,6 +111,11 @@ export const appRoutes: Route[] = [
                     loadComponent: () => import('./modules/admin/cic/panelrecepcion/panelrecepcion.component')
                                           .then(m => m.PanelrecepcionComponent)
                   },
+                                    {
+                    path: 'recepcionxguia',
+                    loadComponent: () => import('./modules/admin/cic/recepcionxguia/recepcionxguia.component')
+                                          .then(m => m.RecepcionxguiaComponent)
+                  },
                 ]
               },
               {

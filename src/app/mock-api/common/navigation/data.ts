@@ -129,23 +129,37 @@ export const horizontalNavigation: FuseNavigationItem[] = [
            
         ],
     },
-    {
-        id   : '3',
-        title: 'Recepción',
-        type : 'aside',
-        icon : 'heroicons_outline:chart-pie',
-        link : '/cic',
-        children: [
-            {
-                id: '1',
-                title: 'Recepción de Guías',
-                type: 'basic',
-                icon: 'heroicons_outline:clipboard-document-check',
-                link: '/cic/masivocomprobantes',
-            }
-           
-        ],
-    },
+  {
+    id   : '3',
+    title: 'Recepción',
+    type : 'aside',
+    icon : 'heroicons_outline:chart-pie',
+    link : '/cic',
+    children: [
+        {
+            id: '1',
+            title: 'Recepción Masiva OSR',
+            type: 'basic',
+            icon: 'heroicons_outline:clipboard-document-check',
+            link: '/recepcion/masivocomprobantes',
+        },
+        {
+            id: '2',
+            title: 'Panel de Recepción',
+            type: 'basic',
+            icon: 'heroicons_outline:clipboard-list',
+            link: '/recepcion/panel',
+        },
+        {
+            id: '3',
+            title: 'Recepción por Guía',
+            type: 'basic',
+            icon: 'heroicons_outline:clipboard-document',
+            link: '/recepcion/recepcionxguia',
+        }
+    ],
+},
+
     {
         id   : '4',
         title: 'Reportes',

@@ -38,3 +38,22 @@ export interface DocumentoRecepcionDetalle {
   idalmacen: number;
   codigoproducto?: string;
 }
+export interface RegistrarRecepcionDto {
+  numeroDocumento: string;
+  guiaRemision: string;
+  fechaRecepcion: string;   // viene como string ISO
+  idPartner: number;
+  idFabricante: number;
+  idProducto: number;
+  idOrigen: number;
+  idAlmacen: number;
+  idUsuarioRegistro: number;
+  serie: string;
+  imei: string;
+  mac: string;
+  cantidad: number;
+}
+
+export interface RegistrarDeleteDto {
+  idDocumentoRecepcion: number;
+}

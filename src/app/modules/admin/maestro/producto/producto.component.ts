@@ -12,6 +12,7 @@ import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { MaestroService } from '../maestro.service';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 @Component({
   selector: 'app-producto',
@@ -28,7 +29,8 @@ import { MaestroService } from '../maestro.service';
     DialogModule,
     DropdownModule,
     ToastModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    InputSwitchModule
   ],
   providers: [MessageService, ConfirmationService]
 })
@@ -248,7 +250,7 @@ export class ProductoComponent implements OnInit {
       CodigoProducto: this.nuevoProducto.CodigoProducto.trim(),
       DescripcionCorta: this.nuevoProducto.DescripcionCorta?.trim() || '',
       DescripcionLarga: this.nuevoProducto.DescripcionLarga?.trim() || null,
-      Repuesto: Boolean(this.nuevoProducto.Repuesto),
+      repuesto: Boolean(this.nuevoProducto.repuesto),
       IdTipoProducto: Number(this.nuevoProducto.IdTipoProducto),
       IdFabricante: Number(this.nuevoProducto.IdFabricante),
       IdModelo: Number(this.nuevoProducto.IdModelo),
@@ -261,6 +263,8 @@ export class ProductoComponent implements OnInit {
       PrecioUnitario: Number(this.nuevoProducto.PrecioUnitario) || 0,
       Activo: true
     };
+
+    console.log('DTO a enviar:', dto);
 
     if (this.modoEdicion && this.nuevoProducto.IdProducto) {
       dto.IdProducto = this.nuevoProducto.IdProducto;

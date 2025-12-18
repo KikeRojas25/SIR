@@ -119,121 +119,186 @@
     </p-table>
   </div>
 
-  <p-dialog header="Registrar Producto"
-          [(visible)]="dialogNuevo"
-          [modal]="true"
-          [style]="{width: '850px'}"
-          [closable]="true">
 
-  <!-- 📌 FORMULARIO ORDENADO -->
-  <div class="grid grid-cols-2 gap-6">
+  <p-dialog
+  header="🧾 Registrar Producto"
+  [(visible)]="dialogNuevo"
+  [modal]="true"
+  [style]="{ width: '680px' }"
+  [closable]="true"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="rounded-xl"
+>
+  <div class="p-4 space-y-6">
 
-    <!-- Columna izquierda -->
-    <div class="flex flex-col gap-4">
-      <div>
-        <label class="font-medium">Código</label>
-        <input pInputText [(ngModel)]="nuevoProducto.CodigoProducto" class="w-full" />
-      </div>
-
-      <div>
-        <label class="font-medium">Tipo Mercadería</label>
-        <p-dropdown [options]="tiposMercaderia"
-                    [(ngModel)]="nuevoProducto.IdTipoMercaderia"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="--Seleccionar--"
-                    class="w-full">
-        </p-dropdown>
-      </div>
-
-      <div>
-        <label class="font-medium">Descripción Larga</label>
-        <input pInputText [(ngModel)]="nuevoProducto.DescripcionLarga" class="w-full" />
-      </div>
-
-      <div>
-        <label class="font-medium">Modelo</label>
-        <p-dropdown [options]="modelos"
-                    [(ngModel)]="nuevoProducto.IdModelo"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="--Modelo--"
-                    class="w-full">
-        </p-dropdown>
-      </div>
-
-      <div>
-        <label class="font-medium">Precio</label>
-        <input pInputText type="number" [(ngModel)]="nuevoProducto.PrecioUnitario" class="w-full" />
-      </div>
-    </div>
-
-    <!-- Columna derecha -->
-    <div class="flex flex-col gap-4">
-      <div>
-        <label class="font-medium">Tipo Producto</label>
-        <p-dropdown [options]="tipos"
-                    [(ngModel)]="nuevoProducto.IdTipoProducto"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="--Tipo Producto--"
-                    class="w-full">
-        </p-dropdown>
-      </div>
-
-      <div>
-        <label class="font-medium">Descripción Corta</label>
-        <input pInputText [(ngModel)]="nuevoProducto.DescripcionCorta" class="w-full" />
-      </div>
-
-      <div>
-        <label class="font-medium">Fabricante</label>
-        <p-dropdown [options]="fabricantes"
-                    [(ngModel)]="nuevoProducto.IdFabricante"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="--Fabricante--"
-                    class="w-full">
-        </p-dropdown>
-      </div>
-
-      <div>
-        <label class="font-medium">Familia</label>
-        <p-dropdown [options]="familias"
-                    [(ngModel)]="nuevoProducto.IdFamilia"
-                    optionLabel="label"
-                    optionValue="value"
-                    placeholder="--Familia--"
-                    class="w-full">
-        </p-dropdown>
-      </div>
+    <!-- 🟩 SECCIÓN 1: Información general -->
+    <div class="border border-gray-200 rounded-xl p-4 shadow-sm bg-gray-50">
+      <h3 class="text-base font-semibold text-gray-800 mb-3 flex items-center gap-2">
+        <i class="pi pi-info-circle text-blue-500"></i> Información general
+      </h3>
 
       <div class="grid grid-cols-2 gap-4">
         <div>
-          <label class="font-medium">Peso</label>
-          <input pInputText type="number" [(ngModel)]="nuevoProducto.Peso" class="w-full" />
+          <label class="text-sm font-medium text-gray-700">Código</label>
+          <input
+            pInputText
+            [(ngModel)]="nuevoProducto.CodigoProducto"
+            placeholder="Ej. PROD001"
+            class="w-full mt-1"
+          />
         </div>
+
         <div>
-          <label class="font-medium">Volumen</label>
-          <input pInputText type="number" [(ngModel)]="nuevoProducto.Volumen" class="w-full" />
+          <label class="text-sm font-medium text-gray-700">Tipo Producto</label>
+          <p-dropdown
+            [options]="tipos"
+            [(ngModel)]="nuevoProducto.IdTipoProducto"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Seleccionar..."
+            class="w-full mt-1"
+          ></p-dropdown>
+        </div>
+
+        <div>
+          <label class="text-sm font-medium text-gray-700">Descripción Corta</label>
+          <input
+            pInputText
+            [(ngModel)]="nuevoProducto.DescripcionCorta"
+            placeholder="Nombre breve del producto"
+            class="w-full mt-1"
+          />
+        </div>
+
+        <div class="flex items-center gap-2 mt-1">
+          <label class="text-sm font-medium text-gray-700 flex-1">¿Es Repuesto?</label>
+          <p-inputSwitch [(ngModel)]="nuevoProducto.repuesto"></p-inputSwitch>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🟦 SECCIÓN 2: Detalle técnico -->
+    <div class="border border-gray-200 rounded-xl p-4 shadow-sm bg-gray-50">
+      <h3 class="text-base font-semibold text-gray-800 mb-3 flex items-center gap-2">
+        <i class="pi pi-cog text-blue-500"></i> Detalle técnico
+      </h3>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm font-medium text-gray-700">Fabricante</label>
+          <p-dropdown
+            [options]="fabricantes"
+            [(ngModel)]="nuevoProducto.IdFabricante"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Seleccionar..."
+            class="w-full mt-1"
+          ></p-dropdown>
+        </div>
+
+        <div>
+          <label class="text-sm font-medium text-gray-700">Modelo</label>
+          <p-dropdown
+            [options]="modelos"
+            [(ngModel)]="nuevoProducto.IdModelo"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Seleccionar..."
+            class="w-full mt-1"
+          ></p-dropdown>
+        </div>
+
+        <div>
+          <label class="text-sm font-medium text-gray-700">Familia</label>
+          <p-dropdown
+            [options]="familias"
+            [(ngModel)]="nuevoProducto.IdFamilia"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Seleccionar..."
+            class="w-full mt-1"
+          ></p-dropdown>
+        </div>
+
+        <div>
+          <label class="text-sm font-medium text-gray-700">Descripción Larga</label>
+          <textarea
+            pInputTextarea
+            [(ngModel)]="nuevoProducto.DescripcionLarga"
+            rows="2"
+            class="w-full mt-1"
+            placeholder="Describe el producto en detalle..."
+          ></textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🟨 SECCIÓN 3: Medidas y costos -->
+    <div class="border border-gray-200 rounded-xl p-4 shadow-sm bg-gray-50">
+      <h3 class="text-base font-semibold text-gray-800 mb-3 flex items-center gap-2">
+        <i class="pi pi-box text-blue-500"></i> Medidas y costos
+      </h3>
+
+      <div class="grid grid-cols-3 gap-4">
+        <div>
+          <label class="text-sm font-medium text-gray-700">Precio (S/)</label>
+          <input
+            pInputText
+            type="number"
+            [(ngModel)]="nuevoProducto.PrecioUnitario"
+            min="0"
+            placeholder="0.00"
+            class="w-full mt-1"
+          />
+        </div>
+
+        <div>
+          <label class="text-sm font-medium text-gray-700">Peso (kg)</label>
+          <input
+            pInputText
+            type="number"
+            [(ngModel)]="nuevoProducto.Peso"
+            min="0"
+            placeholder="0"
+            class="w-full mt-1"
+          />
+        </div>
+
+        <div>
+          <label class="text-sm font-medium text-gray-700">Volumen (m³)</label>
+          <input
+            pInputText
+            type="number"
+            [(ngModel)]="nuevoProducto.Volumen"
+            min="0"
+            placeholder="0"
+            class="w-full mt-1"
+          />
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 📌 BOTONES -->
+  <!-- 🔘 BOTONES -->
   <ng-template pTemplate="footer">
-    <button pButton 
-            label="Cancelar" 
-            icon="pi pi-times" 
-            class="p-button-text" 
-            (click)="dialogNuevo=false">
-    </button>
+    <div class="flex justify-end gap-3 px-4 py-2">
+      <button
+        pButton
+        label="Cancelar"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="dialogNuevo = false"
+      ></button>
 
-    <button pButton
-            [label]="modoEdicion ? 'Actualizar' : 'Guardar'"
-            class="p-button-primary"
-            (click)="confirmarGuardar()">
-    </button>
+      <button
+        pButton
+        [label]="modoEdicion ? 'Actualizar' : 'Guardar'"
+        icon="pi pi-save"
+        class="p-button-primary"
+        (click)="confirmarGuardar()"
+      ></button>
+    </div>
   </ng-template>
 </p-dialog>
+

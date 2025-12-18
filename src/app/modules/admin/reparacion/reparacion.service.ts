@@ -166,12 +166,21 @@ finalizarReparacion(request: FinalizarReparacionRequest) {
   console.log('aca xD' ,request);
   return this._httpClient.put(`${this.baseUrl}finalizar-reparacion`, request);
 }
-
-
-
-pausarReparacion(idOrdenServicio: number): Observable<any> {
-  return this._httpClient.put(`${this.baseUrl}pausar-reparacion/${idOrdenServicio}`, {});
+obtenerOrdenServicio(idOrdenServicio: number) : Observable<any> {
+  console.log('🔍 Obteniendo orden de servicio:', idOrdenServicio);
+  return this._httpClient.get(`${this.baseUrl}ObtenerOrdenServicio/${idOrdenServicio}`);
 }
+
+
+pausarReparacion(idOrdenServicio: number, comentario: string): Observable<any> {
+  const body = {
+    idOrdenTrabajo: idOrdenServicio,
+    comentario: comentario
+  };
+
+  return this._httpClient.put(`${this.baseUrl}pausar-reparacion`, body);
+}
+
 
 
 getEstados(idTabla: number): Observable<any> {

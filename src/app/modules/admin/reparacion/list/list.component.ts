@@ -147,7 +147,7 @@ export class ListComponent implements OnInit {
         }));
         this.tecnicos.unshift({ label: 'Selecciona un técnico', value: null });
         this.tecnicoSeleccionado = this.tecnicos[0].value;
-        this.buscar(); // Cargar lista cuando los combos están listos
+        //this.buscar(); // Cargar lista cuando los combos están listos
       },
       error: (error) => {
         console.error('Error al cargar técnicos:', error);
