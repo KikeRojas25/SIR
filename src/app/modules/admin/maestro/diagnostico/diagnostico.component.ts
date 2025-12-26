@@ -134,80 +134,87 @@ this.categorias = (res ?? []).map((c: any) => ({
   // ======================================================
   // GUARDAR
   // ======================================================
-  guardar(row: any): void {
-    if (!row.codigoSmartway?.trim()) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Atención',
-        detail: 'El código Smartway es obligatorio.',
-        life: 2500,
-      });
-      return;
-    }
+ guardar(row: any): void {
 
-    if (!row.descripcion?.trim()) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Atención',
-        detail: 'La descripción es obligatoria.',
-        life: 2500,
-      });
-      return;
-    }
-
-    if (!row.idCategoriaReparacion) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Atención',
-        detail: 'Debe seleccionar una categoría de reparación.',
-        life: 2500,
-      });
-      return;
-    }
-
-    const esNuevo = !row.iddiagnosticosmartway;
-
-    this.confirmationService.confirm({
-      message: esNuevo
-        ? '¿Desea crear un nuevo diagnóstico?'
-        : '¿Desea actualizar el diagnóstico?',
-      header: esNuevo ? 'Confirmar creación' : 'Confirmar actualización',
-      icon: 'pi pi-question-circle',
-      acceptLabel: 'Sí',
-      rejectLabel: 'No',
-      accept: () => {
-        const payload = {
-          iddiagnosticosmartway: row.iddiagnosticosmartway ?? 0,
-          CodigoSmartway: row.codigoSmartway?.trim(),
-          Descripcion: row.descripcion?.trim(),
-          IdCategoriaReparacion: row.idCategoriaReparacion
-        };
-
-        console.log('📤 Enviando al backend:', payload);
-
-        this.maestroService.guardarDiagnostico(payload).subscribe({
-          next: (res) => {
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Éxito',
-              detail: res?.mensaje || '✅ Diagnóstico guardado correctamente',
-              life: 2500,
-            });
-            this.listarDiagnosticos();
-          },
-          error: (err) => {
-            console.error('❌ Error al guardar diagnóstico', err);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'No se pudo guardar el diagnóstico.',
-              life: 2500,
-            });
-          },
-        });
-      },
+  if (!row.codigoSmartway?.trim()) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Atención',
+      detail: 'El código Smartway es obligatorio.',
+      life: 2500,
     });
+    return;
   }
+
+  if (!row.descripcion?.trim()) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Atención',
+      detail: 'La descripción es obligatoria.',
+      life: 2500,
+    });
+    return;
+  }
+
+  if (!row.idCategoriaReparacion) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Atención',
+      detail: 'Debe seleccionar una categoría de reparación.',
+      life: 2500,
+    });
+    return;
+  }
+
+  const esNuevo = !row.iddiagnosticosmartway;
+
+  this.confirmationService.confirm({
+    message: esNuevo
+      ? '¿Desea crear un nuevo diagnóstico?'
+      : '¿Desea actualizar el diagnóstico?',
+    header: esNuevo ? 'Confirmar creación' : 'Confirmar actualización',
+    icon: 'pi pi-question-circle',
+    acceptLabel: 'Sí',
+    rejectLabel: 'No',
+    accept: () => {
+
+      const payload = {
+        IdDiagnosticosmartway: row.iddiagnosticosmartway ?? 0,
+        CodigoSmartway: row.codigoSmartway.trim(),
+        Descripcion: row.descripcion.trim(),
+        IdCategoriaReparacion: row.idCategoriaReparacion
+      };
+
+      console.log('📤 Payload enviado:', payload);
+
+      const request$ = esNuevo
+        ? this.maestroService.guardarDiagnostico(payload)          // POST
+        : this.maestroService.actualizarDiagnostico(payload);      // PUT
+
+      request$.subscribe({
+        next: (res) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Éxito',
+            detail: 'Diagnóstico guardado correctamente',
+            life: 2500,
+          });
+          this.listarDiagnosticos();
+        },
+        error: (err) => {
+          console.error('❌ Error al guardar diagnóstico', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'No se pudo guardar el diagnóstico.',
+            life: 2500,
+          });
+        },
+      });
+    },
+  });
+}
+
 
   // ======================================================
   // ELIMINAR

@@ -133,33 +133,51 @@ cargarOrdenTrabajoDetalle() {
   
 cargarContador(id: number): void {
   this.reparacionService.getTiempoOrdenTrabajo(id).subscribe((res) => {
-    console.log('⏱ Respuesta del servicio:', res);
-    if (res && res.length > 0 && res[0].fechaHoraInicio) {
-      const inicio = new Date(res[0].fechaHoraInicio);
-      console.log('⏱ Inicio:', inicio);
-      this.iniciarContador(inicio);
-    } else {
-      console.warn('⚠️ No se recibió una fecha válida para iniciar el contador');
+
+    if (!res || res.length === 0) {
+      return;
     }
+
+    const ultimo = res[0];
+
+    const inicio = new Date(ultimo.fechaHoraInicio);
+
+    // 🔑 Punto base:
+    // - si estaba pausado → usar fechaHoraFin
+    // - si estaba activo → usar ahora
+    const base = ultimo.fechaHoraFin
+      ? new Date(ultimo.fechaHoraFin)
+      : new Date();
+
+    // 1️⃣ Mostrar tiempo correcto
+    this.calcularContador(inicio, base);
+
+    // 2️⃣ 🔁 CONTINUAR SIEMPRE
+    this.iniciarIntervalo(inicio);
   });
 }
 
-iniciarContador(inicio: Date): void {
+calcularContador(inicio: Date, fin: Date): void {
+  const diffMs = fin.getTime() - inicio.getTime();
+  const diffSeg = Math.floor(diffMs / 1000);
+
+  this.contador.dias = Math.floor(diffSeg / (3600 * 24));
+  this.contador.horas = Math.floor((diffSeg % (3600 * 24)) / 3600);
+  this.contador.minutos = Math.floor((diffSeg % 3600) / 60);
+  this.contador.segundos = diffSeg % 60;
+}
+
+
+iniciarIntervalo(inicio: Date): void {
   if (this.intervalRef) {
     clearInterval(this.intervalRef);
   }
 
   this.intervalRef = setInterval(() => {
-    const ahora = new Date();
-    const diffMs = ahora.getTime() - inicio.getTime();
-
-    const diffSeg = Math.floor(diffMs / 1000);
-    this.contador.dias = Math.floor(diffSeg / (3600 * 24));
-    this.contador.horas = Math.floor((diffSeg % (3600 * 24)) / 3600);
-    this.contador.minutos = Math.floor((diffSeg % 3600) / 60);
-    this.contador.segundos = diffSeg % 60;
+    this.calcularContador(inicio, new Date());
   }, 1000);
 }
+
 
 
   onDiagnosticoChange(event: any) {
@@ -371,28 +389,41 @@ confirmarPausaReparacion() {
 }
 
 pausarReparacion() {
-  this.reparacionService.pausarReparacion(this.id, this.model.descripcion).subscribe({
-    next: () => {
-      this.messageService.add({
-        severity: 'info',
-        summary: 'Reparación pausada',
-        detail: 'La orden ha sido pausada correctamente.'
-      });
+  this.reparacionService
+    .pausarReparacion(this.id, this.model.descripcion)
+    .subscribe({
+      next: () => {
 
-      clearInterval(this.intervalRef); // Detener contador
-      this.contador = { dias: 0, horas: 0, minutos: 0, segundos: 0 }; // Reiniciar
-     // this.cd.detectChanges(); // Actualiza la vista
-    },
-    error: (err) => {
-      console.error('Error al pausar:', err);
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: 'No se pudo pausar la reparación.'
-      });
-    }
-  });
+        // ⛔ detener reloj
+        if (this.intervalRef) {
+          clearInterval(this.intervalRef);
+          this.intervalRef = null;
+        }
+
+        // ❌ NO REINICIAR CONTADOR
+
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Reparación pausada',
+          detail: 'La orden fue pausada correctamente.'
+        });
+
+        // ⬅️ volver
+setTimeout(() => {
+  this.router.navigate(['/reparacion/panel']);
+}, 600);
+
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: err?.error?.message || 'No se pudo pausar.'
+        });
+      }
+    });
 }
+
 
 confirmarRemozado() {
   this.confirmationService.confirm({

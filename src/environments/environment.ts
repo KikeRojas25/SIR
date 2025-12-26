@@ -4,8 +4,8 @@
 
 export const environment = {
     production: false,
-    //baseUrl: 'http://localhost:5000',
-    baseUrl: ' http://riabc.pe/apisir',
+    baseUrl: 'http://localhost:5000',
+    //baseUrl: ' http://104.36.166.65/apisir',
     uploadsDocuments: 'D:\\APPS\\Toscanos\\Web\\UploadedFiles\\'
 };
 

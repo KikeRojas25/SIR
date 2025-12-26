@@ -2,7 +2,7 @@
 <div class="flex flex-col flex-auto min-w-0">
 
 
-  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+  <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-4 sm:px-10 border-b bg-card dark:bg-transparent">
     <div class="flex-1 min-w-0">
       <div  class="flex flex-wrap items-center font-medium">
         <div>
@@ -15,7 +15,7 @@
               <a  class="ml-1 text-primary-500">Listado de OCs de importación</a>
           </div>
       </div>
-          <div class="mt-2"><h2  class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"> OCs de Importación </h2>
+          <div class="mt-1"><h2  class="text-3xl md:text-4xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate"> OCs de Importación </h2>
       </div>
   </div>
   </div>
@@ -23,7 +23,7 @@
 
  
 
-<div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+<div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 sm:py-4 sm:px-10 border-b bg-card dark:bg-transparent">
 
 
 
@@ -101,7 +101,7 @@
     
   </div>
   
-  <div class="flex flex-col p-6 sm:py-8 sm:px-10 border-b bg-card dark:bg-transparent">
+  <div class="flex flex-col p-6 sm:py-4 sm:px-10 border-b bg-card dark:bg-transparent">
 
     <div class="button-group mb-4">
       <p-button  label="Enviar a Importaciones" icon="fa fa-paper-plane" (onClick)="enviarImportaciones()">
@@ -304,9 +304,9 @@
             </div>
             <div class="p-card-body">
               <p class="p-m-0" style="font-size: 0.8rem; margin: 0;">{{ event.date | date:'dd/MM/yyyy' }}</p>
-              <p class="p-mt-2 p-mb-0" style="font-size: 0.8rem; font-weight: 600;">Aprobado por: {{ event.approvedBy }}</p>
+              <p class="p-mt-1 p-mb-0" style="font-size: 0.8rem; font-weight: 600;">Aprobado por: {{ event.approvedBy }}</p>
             </div>
-            <button (click)="downloadFile(event.fileUrl)" class="p-button p-button-icon p-mt-2" aria-label="Download file">
+            <button (click)="downloadFile(event.fileUrl)" class="p-button p-button-icon p-mt-1" aria-label="Download file">
               <i class="pi pi-download" style="font-size: 1rem;"></i>
             </button>
           </div>
@@ -334,9 +334,9 @@
             </div>
             <div class="p-card-body">
               <p class="p-m-0" style="font-size: 0.8rem; margin: 0;">{{ event.date | date:'dd/MM/yyyy' }}</p>
-              <p class="p-mt-2 p-mb-0" style="font-size: 0.8rem; font-weight: 600;">Aprobado por: {{ event.approvedBy }}</p>
+              <p class="p-mt-1 p-mb-0" style="font-size: 0.8rem; font-weight: 600;">Aprobado por: {{ event.approvedBy }}</p>
             </div>
-            <button (click)="downloadFile(event.fileUrl)" class="p-button p-button-icon p-mt-2" aria-label="Download file">
+            <button (click)="downloadFile(event.fileUrl)" class="p-button p-button-icon p-mt-1" aria-label="Download file">
               <i class="pi pi-download" style="font-size: 1rem;"></i>
             </button>
           </div>

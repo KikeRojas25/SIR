@@ -118,20 +118,37 @@ getDiagnosticoxCriterio(filtro: any): Observable<any[]> {
 
   if (filtro.idCategoriaReparacion)
     params = params.set('idCategoriaReparacion', filtro.idCategoriaReparacion);
+
   if (filtro.idFabricante)
     params = params.set('idFabricante', filtro.idFabricante);
+
   if (filtro.idTipoProducto)
     params = params.set('idTipoProducto', filtro.idTipoProducto);
+
   if (filtro.idTipoDiagnostico)
-    params = params.set('idTipoDiagnostico', filtro.idTipoDiagnostico);
-  if (filtro.garantia)
+    params = params.set('idDiagnostico', filtro.idTipoDiagnostico); // ✅ FIX
+
+  if (filtro.garantia !== null && filtro.garantia !== undefined)
     params = params.set('garantia', filtro.garantia);
 
-  return this._httpClient.get<any[]>(`${this.baseUrl}/GetDiagnosticoxCriterio`, { params });
+  return this._httpClient.get<any[]>(
+    `${this.baseUrl}/GetDiagnosticoxCriterio`,
+    { params }
+  );
 }
 
 guardarDiagnostico(diagnostico: any): Observable<any> {
-  return this._httpClient.post(`${this.baseUrl}/GuardarDiagnostico`, diagnostico);
+  return this._httpClient.post(
+    `${this.baseUrl}/GuardarDiagnostico`,
+    diagnostico
+  );
+}
+
+actualizarDiagnostico(diagnostico: any): Observable<any> {
+  return this._httpClient.put(
+    `${this.baseUrl}/ActualizarDiagnostico`,
+    diagnostico
+  );
 }
 
 eliminarDiagnostico(id: number) {
